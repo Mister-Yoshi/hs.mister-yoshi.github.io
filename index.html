@@ -23,26 +23,29 @@
       background-color: #000;
       font-family: 'VT323', monospace;
       color: var(--p-color);
-      min-height: 100vh;
+      overflow-x: hidden;
       display: flex;
       justify-content: center;
+      min-height: 100vh;
     }
 
-    /* --- BOOT SEQUENCE ANIMATIE --- */
+    /* --- BOOT SEQUENCE ANIMATION --- */
     #boot-screen {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      inset: 0;
       background: #000;
       z-index: 1000;
       padding: 40px;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
-    /* --- CRT EFFECTEN --- */
+    /* --- CRT EFFECTS --- */
     .monitor-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
       background-size: 100% 3px;
       pointer-events: none;
       z-index: 100;
@@ -53,7 +56,7 @@
       padding: 20px;
       position: relative;
       text-shadow: 0 0 5px var(--p-color);
-      display: none; /* Wordt getoond na boot */
+      visibility: hidden; /* Wordt zichtbaar na boot */
     }
 
     header {
@@ -65,7 +68,7 @@
 
     .logo-link img {
       height: 80px;
-      filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(15);
+      filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(20);
       border: 1px solid var(--p-color);
     }
 
@@ -92,14 +95,15 @@
 
     .interactive-link {
       border: 1px solid var(--p-dim); padding: 15px; text-align: center;
-      text-decoration: none; color: var(--p-color); font-size: 1.4rem;
+      text-decoration: none; color: var(--p-color); font-size: 1.6rem;
+      transition: background 0.2s;
     }
 
     .interactive-link:hover {
       background: var(--p-color); color: #000; text-shadow: none;
     }
 
-    /* --- DE ULTRA GROENE IFRAME FILTER --- */
+    /* --- DE GROENE IFRAME FILTER --- */
     .iframe-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -111,8 +115,8 @@
       height: 350px;
       border: 2px solid var(--p-color);
       background: #000;
-      /* Deze filter dwingt de witte sites naar zwart-groen */
-      filter: invert(1) hue-rotate(95deg) brightness(1.1) contrast(1.2) sepia(100%) saturate(800%) hue-rotate(45deg);
+      /* Dwingt externe witte sites naar felgroen op zwart */
+      filter: invert(1) hue-rotate(90deg) brightness(1.2) contrast(1.5) sepia(100%) saturate(500%) hue-rotate(50deg);
     }
 
     footer {
@@ -121,21 +125,13 @@
       margin-top: 50px;
     }
 
-    .typing {
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: .15em solid var(--p-color);
-      animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
-    }
-
-    @keyframes typing { from { width: 0 } to { width: 100% } }
-    @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--p-color); } }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
   <div id="boot-screen">
-    <div id="boot-text"></div>
+    <div id="boot-log"></div>
   </div>
 
   <div class="monitor-overlay"></div>
@@ -143,18 +139,18 @@
   <div class="container" id="main-ui">
     <header>
       <a href="#" class="logo-link">
-        <img src="images/HS.jpg" alt="HS Logo">
+        <img src="images/HS.jpg" alt="Logo HS">
       </a>
       <div class="title-block">
         <h1>Hoggynesische Spoorwegen</h1>
-        <p>> SYSTEEM-STATUS: ONLINE | LOCATIE: SECTOR_ASSEN</p>
+        <p>> SYSTEEM-STATUS: OPERATIONEEL | LINK-HUB V3.0</p>
       </div>
     </header>
 
     <main class="main-content">
       <div class="search-bar">
         <form action="https://www.google.com/search">
-          <input type="text" placeholder="ZOEKOPDRACHT..." name="q">
+          <input type="text" placeholder="ZOEKEN OP HET NETWERK..." name="q">
           <button type="submit">ZOEK</button>
         </form>
       </div>
@@ -165,14 +161,14 @@
         <a href="https://treinposities.nl/" class="interactive-link">Treinposities</a>
         <a href="https://www.belgiantrain.be/" class="interactive-link">NMBS</a>
         <a href="https://chatgpt.com/" class="interactive-link">ChatGPT</a>
-        <a href="https://github.com/" class="interactive-link">Github</a>
+        <a href="https://github.com/" class="interactive-link">GitHub</a>
         <a href="https://www.b-europe.com/" class="interactive-link">NMBS International</a>
         <a href="https://mister-yoshi.github.io/index-fr.html" class="interactive-link">Frans</a>
       </div>
 
       <div class="feature-box">
-        <h2>VERTREKSTATEN</h2>
-        <p>Real-time datafeed van geselecteerde overslagpunten:</p>
+        <h2 style="border-bottom: 1px solid var(--p-dim); margin-bottom: 15px;">Vertrekstaten</h2>
+        <p>Realtime datastroom van geselecteerde stationshubs:</p>
         
         <div class="iframe-container">
           <iframe src="https://treinposities.nl/embedvertrekstaat/assen"></iframe>
@@ -184,41 +180,44 @@
     </main>
 
     <footer>
-      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN. ALLE SYSTEMEN NOMINAAL.</p>
+      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN. Alle rechten voorbehouden.</p>
     </footer>
   </div>
 
   <script>
-    // Boot animatie script
-    const bootText = [
-      "HS-BIOS V4.0.2...",
-      "GEHEUGEN CHECK: 640KB OK",
-      "NETWERK PROTOCOL: HS-IP ACTIEF",
-      "IFRAME MODULES LADEN...",
-      "FELGROENE FOSFOR GEINITIALISEERD...",
-      "TOEGANG VERLEEND."
+    const log = document.getElementById('boot-log');
+    const bootScreen = document.getElementById('boot-screen');
+    const mainUI = document.getElementById('main-ui');
+
+    const messages = [
+      "HS-BIOS V4.01 RELEASE 1982",
+      "CHECKING RAM... 640KB OK",
+      "INITIALIZING NETWORK PROTOCOLS...",
+      "CONNECTING TO HOGGYNESIA CENTRAL...",
+      "LOADING DATA-LINKS: NS, NMBS, GPT...",
+      "ESTABLISHING SECURE CONNECTION...",
+      "READY."
     ];
 
-    const bootContainer = document.getElementById('boot-text');
-    let line = 0;
+    let msgIndex = 0;
 
     function typeBoot() {
-      if (line < bootText.length) {
-        let p = document.createElement('p');
-        p.className = "typing";
-        p.innerText = "> " + bootText[line];
-        bootContainer.appendChild(p);
-        line++;
-        setTimeout(typeBoot, 600);
+      if (msgIndex < messages.length) {
+        const p = document.createElement('p');
+        p.textContent = "> " + messages[msgIndex];
+        log.appendChild(p);
+        msgIndex++;
+        setTimeout(typeBoot, 400); // Snelheid van de boot lines
       } else {
         setTimeout(() => {
-          document.getElementById('boot-screen').style.display = 'none';
-          document.getElementById('main-ui').style.display = 'block';
-        }, 1000);
+          bootScreen.style.display = 'none';
+          mainUI.style.visibility = 'visible';
+        }, 800);
       }
     }
 
     window.onload = typeBoot;
   </script>
+
 </body>
 </html>
