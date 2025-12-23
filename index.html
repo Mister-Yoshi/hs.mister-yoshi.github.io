@@ -36,9 +36,9 @@
     .lang-toggle { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--p-color); color: var(--p-color); font-family: inherit; padding: 5px 15px; cursor: pointer; font-size: 1.2rem; }
     .lang-toggle:hover { background: var(--p-color); color: #000; }
 
-    /* Logo Styling met het nieuwe HS logo */
+    /* Logo container die jouw images/HS.jpg gebruikt */
     .logo-container { height: 85px; width: 150px; border: 1px solid var(--p-color); overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
-    .logo-container img { height: 100%; filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg) saturate(10); }
+    .logo-container img { height: 100%; width: auto; filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg) saturate(10); }
 
     .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 40px; background: rgba(0, 10, 0, 0.3); }
     .search-bar form { display: flex; gap: 15px; }
@@ -69,11 +69,11 @@
     <header>
       <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
       <div class="logo-container">
-        <img src="data:image/webp;base64,UklGRmYDAABXRUJQVlA4IFoDAABQEwCdASpAAEAAPm0skkWkIqGhMDUpgCANiWkA0Fas9z99/m9n+X76/m736m9z/8f89/zL7Xv6388/mH8X/7z8AP7D/W/+n+439v/+n+SfgB/nf+d/fP/Nfm7///+p8Gf8P/vP3e/4n7U///9gP9C/rX/e/wn+n/93+Q////+PdB/6X/f/1X9xv//+Xf7Bf2f/8P9p/9P8y/2M///7Uf9x/5P8x/sv/m9C/8u/vn/m/x/+t///9gH//9QD/+9Yv7H/23/l/zv+4+P/5F/n/+v/df3q/3fxT/Qf8Z/x/8V/ov/f/of///8vkp+gf5z/of3f/vf7X///+z7rP2D/v/97/ov+Z///pC/lH+Q/5X97/8v+7////2/Yn/F/8t/pf7T/7f8h////r9hf8n/uP+2/v3/k/3n////76V/oP+R/cP3X/uv7f/9f9V////79DP5Z/mf+Z/eP+8/uf////P6Ffx7/L/9D/H/7r/6/8D////r9Xf99/5n9+/9H/N////+fQD/Lf7x/w/8H/v//p/m////9fVp/2f+z/xf/N/vX///+B9AP8o/u//F/w3+6/+P+W////6+on+c/6r+H/3X/y/z3////76Zf6P/l/+d/gv9v/9P87////4+mX+l/6H/o/4f/df/P/Pf///+PqB/ov+Y/5X+E/23/0/zX///+XpZ/pP+e/6P+D/3H/0/zH///+Xpt/pf+m/6T+C/3H/z/zf///8fUb/S/9R/0X8D/uf/p/mP///8fVD/Tf9P/0X8D/uf/p/n////8fVz/Uf9V/0P8B/uP/n/n////8fXz/U/9X/0P8B/uf/n/n////8fX7/Vf9X/0P8B/uf/n/n////8fX9/Vf9Z/0H8A/uP/n/n////8fX//Vf9Z/0H8A/uP/n/n////8fYD/Vf9Z/0H8A/uP/n/n////8fYH/Vv9Z/0H8A/uP/n/n////8fYP/Vv9b/0H8A/uP/n/n////8fYX/Vv9b/0H8A/uP/n/n////8fYn/Vv9b/0H8A/uP/n/n////8fY3/Vv9b/0H8A/uP/n/n////8fY//Vv9b/0H8A/uP/n/n////8fZD/Vv9b/0H8A/uP/n/n////8fZH/Vv9b/0H8A/uP/n/n////8fZP/Vv9b/0H8A/uP/n/n////8fZX/Vv9b/0H8A/uP/n/n////8fZb/Vv9b/0H8A/uP/n/n////8fZn/Vv9b/0H8A/uP/n/n////8fZr/Vv9b/0H8A/uP/n/n////8f9gA=" alt="HS Logo">
+        <img src="images/HS.jpg" alt="HS Logo">
       </div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 6.0 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status">> VERSIE 6.1 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
@@ -114,11 +114,10 @@
   <script>
     let currentLang = 'nl';
     const translations = {
-      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.0 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
-      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.0 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
+      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.1 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
+      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.1 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
     };
 
-    // Audio Context voor klikgeluiden
     let audioCtx;
     function playClick() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -150,12 +149,11 @@
       document.getElementById('langBtn').textContent = t.langBtn;
     }
 
-    // Auto-Boot Sequence (Zonder audio)
     const messages = [
-      "SYSTEM INIT: HS-CORE-V6",
+      "SYSTEM INIT: HS-CORE-V6.1",
+      "LOADING IMAGES/HS.JPG... OK",
       "CHECKING FILE SYSTEMS... OK",
       "SYNCING DATA NODES... OK",
-      "UPDATING INTERFACE... OK",
       "SYSTEM READY."
     ];
 
