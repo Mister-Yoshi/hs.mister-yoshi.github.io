@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal Netwerk v5.0</title>
+  <title>HS | Terminal Multi-Lang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -18,188 +18,40 @@
     }
 
     * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: #000; font-family: 'VT323', monospace; color: var(--p-color); overflow-x: hidden; min-height: 100vh; }
 
-    body {
-      margin: 0; padding: 0;
-      background-color: #000;
-      font-family: 'VT323', monospace;
-      color: var(--p-color);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
+    /* CRT Effects */
+    .monitor-overlay { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.2) 50%); background-size: 100% 3px; pointer-events: none; z-index: 2000; }
+    .crt-curve { position: fixed; inset: 0; background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 2001; }
 
-    /* --- CRT & OVERLAYS --- */
-    .monitor-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
-      background-size: 100% 3px;
-      pointer-events: none;
-      z-index: 2000;
-    }
+    /* Boot Screen */
+    #boot-screen { position: fixed; inset: 0; background: #000; z-index: 3000; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-out; }
+    #boot-log { text-align: left; width: 100%; max-width: 650px; font-size: 1.4rem; }
 
-    .crt-curve {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.5) 100%);
-      pointer-events: none;
-      z-index: 2001;
-    }
+    /* UI Layout */
+    #main-ui { display: none; width: 100%; max-width: 1100px; margin: 0 auto; padding: 20px; text-shadow: 0 0 5px var(--p-color); }
+    
+    header { border: var(--border-style); padding: 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 25px; background: rgba(0, 20, 0, 0.4); position: relative; }
+    
+    .lang-toggle { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--p-color); color: var(--p-color); font-family: inherit; padding: 5px 15px; cursor: pointer; font-size: 1.2rem; }
+    .lang-toggle:hover { background: var(--p-color); color: #000; }
 
-    /* --- BOOT SCREEN --- */
-    #boot-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 3000;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 1s ease-out;
-    }
+    .logo-link img { height: 85px; filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(15); border: 1px solid var(--p-color); }
 
-    #boot-log {
-      text-align: left;
-      width: 100%;
-      max-width: 650px;
-      font-size: 1.4rem;
-      min-height: 200px;
-    }
-
-    .init-btn {
-      background: transparent;
-      border: 2px solid var(--p-color);
-      color: var(--p-color);
-      padding: 15px 40px;
-      font-family: inherit;
-      font-size: 2rem;
-      cursor: pointer;
-      box-shadow: var(--terminal-glow);
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .init-btn:hover {
-      background: var(--p-color);
-      color: #000;
-      box-shadow: 0 0 20px var(--p-color);
-    }
-
-    /* --- MAIN UI --- */
-    #main-ui {
-      display: none; /* Tonen na boot */
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px;
-      text-shadow: 0 0 5px var(--p-color);
-    }
-
-    header {
-      border: var(--border-style);
-      padding: 20px;
-      margin-bottom: 30px;
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      background: rgba(0, 20, 0, 0.4);
-      box-shadow: var(--terminal-glow);
-    }
-
-    .logo-link img {
-      height: 85px;
-      filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(15);
-      border: 1px solid var(--p-color);
-    }
-
-    .search-bar {
-      border: var(--border-style);
-      padding: 15px;
-      margin-bottom: 40px;
-      background: rgba(0, 10, 0, 0.3);
-    }
-
+    .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 40px; background: rgba(0, 10, 0, 0.3); }
     .search-bar form { display: flex; gap: 15px; }
-    .search-bar input {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--p-dim);
-      color: var(--p-color);
-      font-family: inherit;
-      font-size: 1.6rem;
-      padding: 10px;
-      outline: none;
-    }
+    .search-bar input { flex: 1; background: transparent; border: 1px solid var(--p-dim); color: var(--p-color); font-family: inherit; font-size: 1.6rem; padding: 10px; outline: none; }
+    .search-bar button { background: var(--p-color); color: #000; border: none; padding: 0 35px; font-family: inherit; font-size: 1.6rem; font-weight: bold; cursor: pointer; }
 
-    .search-bar button {
-      background: var(--p-color);
-      color: #000;
-      border: none;
-      padding: 0 35px;
-      font-family: inherit;
-      font-size: 1.6rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 50px; }
+    .interactive-link { border: 1px solid var(--p-dim); padding: 18px; text-align: center; text-decoration: none; color: var(--p-color); font-size: 1.6rem; transition: all 0.2s; }
+    .interactive-link:hover { background: var(--p-color); color: #000; box-shadow: var(--terminal-glow); }
 
-    /* --- GRID LINKS --- */
-    .links {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin-bottom: 50px;
-    }
-
-    .interactive-link {
-      border: 1px solid var(--p-dim);
-      padding: 18px;
-      text-align: center;
-      text-decoration: none;
-      color: var(--p-color);
-      font-size: 1.6rem;
-      transition: all 0.2s;
-    }
-
-    .interactive-link:hover {
-      background: var(--p-color);
-      color: #000;
-      box-shadow: var(--terminal-glow);
-      text-shadow: none;
-    }
-
-    /* --- IFRAMES (MATRIX FILTER) --- */
-    .feature-box {
-      border: var(--border-style);
-      padding: 25px;
-      background: rgba(0, 15, 0, 0.2);
-    }
-
-    .iframe-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .iframe-container iframe {
-      width: 100%;
-      height: 380px;
-      border: 1px solid var(--p-color);
-      background: #000;
-      /* Dwingt externe witte sites naar felgroen op zwart */
-      filter: invert(1) hue-rotate(90deg) brightness(1.1) contrast(1.4) sepia(100%) saturate(600%) hue-rotate(50deg);
-    }
-
-    footer {
-      border-top: var(--border-style);
-      padding: 40px 20px;
-      margin-top: 60px;
-      text-align: center;
-      opacity: 0.7;
-    }
-
+    .feature-box { border: var(--border-style); padding: 25px; background: rgba(0, 15, 0, 0.2); }
+    .iframe-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 20px; }
+    .iframe-container iframe { width: 100%; height: 380px; border: 1px solid var(--p-color); background: #000; filter: invert(1) hue-rotate(90deg) brightness(1.1) contrast(1.4) sepia(100%) saturate(600%) hue-rotate(50deg); }
+    
+    footer { border-top: var(--border-style); padding: 40px 20px; margin-top: 60px; text-align: center; opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -208,26 +60,24 @@
   <div class="crt-curve"></div>
 
   <div id="boot-screen">
-    <button class="init-btn" id="start-btn">INITIALIZE SYSTEM</button>
     <div id="boot-log"></div>
   </div>
 
   <div class="container" id="main-ui">
     <header>
-      <a href="#" class="logo-link">
-        <img src="images/HS.jpg" alt="Logo HS">
-      </a>
+      <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
+      <a href="#" class="logo-link"><img src="images/HS.jpg" alt="Logo HS"></a>
       <div class="title-block">
-        <h1>Hoggynesische Spoorwegen</h1>
-        <p>> VERSIE 5.0.4 | STATUS: OPERATIONEEL</p>
+        <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
+        <p id="txt-status">> VERSIE 5.0.4 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
     <main>
       <div class="search-bar">
         <form action="https://www.google.com/search">
-          <input type="text" placeholder="SYSTEEM ZOEKEN..." name="q">
-          <button type="submit">ZOEK</button>
+          <input type="text" id="txt-search-placeholder" placeholder="SYSTEEM ZOEKEN..." name="q">
+          <button type="submit" id="txt-search-btn">ZOEK</button>
         </form>
       </div>
 
@@ -235,15 +85,14 @@
         <a href="https://www.ns.nl/" class="interactive-link">NS</a>
         <a href="https://www.nsinternational.com/" class="interactive-link">NS International</a>
         <a href="https://treinposities.nl/" class="interactive-link">Treinposities</a>
-        <a href="https://www.belgiantrain.be/" class="interactive-link">NMBS</a>
+        <a href="https://www.belgiantrain.be/" class="interactive-link" id="txt-nmbs">NMBS</a>
         <a href="https://chatgpt.com/" class="interactive-link">ChatGPT</a>
         <a href="https://github.com/" class="interactive-link">GitHub</a>
-        <a href="https://www.b-europe.com/" class="interactive-link">NMBS International</a>
-        <a href="https://mister-yoshi.github.io/index-fr.html" class="interactive-link">Frans</a>
+        <a href="https://www.b-europe.com/" class="interactive-link" id="txt-nmbs-int">NMBS International</a>
       </div>
 
       <div class="feature-box">
-        <h2 style="border-bottom: 1px solid var(--p-dim); display: inline-block;">VERTREKSTATEN</h2>
+        <h2 id="txt-feature-title" style="border-bottom: 1px solid var(--p-dim); display: inline-block;">VERTREKSTATEN</h2>
         <div class="iframe-container">
           <iframe src="https://treinposities.nl/embedvertrekstaat/assen"></iframe>
           <iframe src="https://treinposities.nl/embedvertrekstaat/roosendaal"></iframe>
@@ -254,71 +103,102 @@
     </main>
 
     <footer>
-      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN - GEBRUIK ONDER PROTOCOL HS-99</p>
+      <p id="txt-footer">&copy; 2025 HOGGYNESISCHE SPOORWEGEN - GEBRUIK ONDER PROTOCOL HS-99</p>
     </footer>
   </div>
 
   <script>
-    const startBtn = document.getElementById('start-btn');
-    const bootLog = document.getElementById('boot-log');
-    const mainUI = document.getElementById('main-ui');
-    const bootScreen = document.getElementById('boot-screen');
+    let currentLang = 'nl';
+    const translations = {
+      nl: {
+        title: "Hoggynesische Spoorwegen",
+        status: "> VERSIE 5.0.4 | STATUS: OPERATIONEEL",
+        search: "SYSTEEM ZOEKEN...",
+        searchBtn: "ZOEK",
+        nmbs: "NMBS",
+        nmbsInt: "NMBS International",
+        feature: "VERTREKSTATEN",
+        footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - GEBRUIK ONDER PROTOCOL HS-99",
+        langBtn: "FRANÇAIS"
+      },
+      fr: {
+        title: "Chemin de fer Hoggynésiens",
+        status: "> VERSION 5.0.4 | ÉTAT: OPÉRATIONNEL",
+        search: "RECHERCHE SYSTÈME...",
+        searchBtn: "CHERCHER",
+        nmbs: "SNCB",
+        nmbsInt: "SNCB International",
+        feature: "TABLEAUX DE DÉPART",
+        footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - UTILISATION SOUS PROTOCOLE HS-99",
+        langBtn: "NEDERLANDS"
+      }
+    };
 
-    // Audio Engine
-    let audioCtx;
-    function playSound(freq, type, vol, duration) {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      g.gain.setValueAtTime(vol, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
+    function toggleLanguage() {
+      currentLang = currentLang === 'nl' ? 'fr' : 'nl';
+      const t = translations[currentLang];
+      document.getElementById('txt-title').textContent = t.title;
+      document.getElementById('txt-status').textContent = t.status;
+      document.getElementById('txt-search-placeholder').placeholder = t.search;
+      document.getElementById('txt-search-btn').textContent = t.searchBtn;
+      document.getElementById('txt-nmbs').textContent = t.nmbs;
+      document.getElementById('txt-nmbs-int').textContent = t.nmbsInt;
+      document.getElementById('txt-feature-title').textContent = t.feature;
+      document.getElementById('txt-footer').textContent = t.footer;
+      document.getElementById('langBtn').textContent = t.langBtn;
     }
 
+    // Boot Logic
+    const bootLog = document.getElementById('boot-log');
     const messages = [
       "HOGGYNESIA KERNEL v5.0.4 LOADED",
       "CHECKING SYSTEM INTEGRITY...",
       "SCANNING RAIL-NODES: ASSEN, ROOSENDAAL, MAASTRICHT, BREDA",
-      "ESTABLISHING SECURE GATEWAY TO NS/NMBS...",
-      "INITIALIZING TERMINAL INTERFACE...",
-      "SUCCESS."
+      "ESTABLISHING SECURE GATEWAY...",
+      "SYSTEM READY."
     ];
 
+    let audioCtx;
+    function playTick() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(150 + Math.random()*50, audioCtx.currentTime);
+      g.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    }
+
     async function runBoot() {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      startBtn.style.display = 'none';
+      // Probeer audio context te starten (kan geblokkeerd worden door browser)
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
 
       for (const msg of messages) {
         const p = document.createElement('p');
         p.style.margin = "4px 0";
         bootLog.appendChild(p);
-
         for (let char of msg) {
           p.textContent += char;
-          playSound(150 + Math.random() * 50, 'square', 0.02, 0.05);
-          await new Promise(r => setTimeout(r, 30));
+          playTick();
+          await new Promise(r => setTimeout(r, 25));
         }
-        playSound(400, 'sine', 0.05, 0.2);
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 300));
       }
 
       setTimeout(() => {
-        bootScreen.style(opacity = '0');
-        bootScreen.style.display = 'none';
-        mainUI.style.display = 'block';
-        // Subtiele muis-glow tracker
-        document.addEventListener('mousemove', (e) => {
-          mainUI.style.background = `radial-gradient(circle at ${e.clientX}px ${e.clientY}px, rgba(51, 255, 0, 0.03) 0%, transparent 50%)`;
-        });
-      }, 800);
+        document.getElementById('boot-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('boot-screen').style.display = 'none';
+          document.getElementById('main-ui').style.display = 'block';
+        }, 800);
+      }, 500);
     }
 
-    startBtn.onclick = runBoot;
+    // Start boot automatisch bij laden
+    window.onload = runBoot;
   </script>
 </body>
 </html>
