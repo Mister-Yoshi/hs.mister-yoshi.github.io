@@ -192,3 +192,120 @@
         "  > KAARTLEZERS: NIET GEVONDEN",
         "VERBINDING MAKEN MET HOOFDMAINFRAME...",
         "...",
+        "VERBINDING GESLAAGD.",
+        "INITIALISEREN INTERFACE..."
+    ];
+
+    // De Inhoud van de pagina's
+    const pages = {
+        menu: `
+${logo}
+WELKOM, OPERATOR.
+HUIDIGE TIJD: <span id="clock">--:--</span>
+
+KIES EEN FUNCTIE:
+
+<span class="cmd-option" onclick="loadPage('vertrektijden')">1. VERTREKSTAAT BEKIJKEN</span>
+<span class="cmd-option" onclick="loadPage('netwerk')">2. STATUS SPOORNETWERK</span>
+<span class="cmd-option" onclick="loadPage('berichten')">3. BERICHTEN VAN DE DIRECTIE</span>
+
+<div class="input-line">C:\\HS_SYSTEM\\USER> <span class="cursor"></span></div>
+`,
+        vertrektijden: `
+>> VERTREKSTAAT LADEN...
+
+STATION: HOGGYNESIE CENTRAAL
+----------------------------------------
+TIJD    BESTEMMING          SPOOR  STATUS
+----------------------------------------
+12:05   NOORD-KAP           02     OP TIJD
+12:18   GROOT-HOGGEN        01     +5 MIN
+12:40   OOST-GRENS          04     VERVALLEN
+13:00   INDUSTRIEZONE-ZUID  03     OP TIJD
+
+<br>
+<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
+<div class="input-line">C:\\HS_SYSTEM\\SCHEDULE> <span class="cursor"></span></div>
+`,
+        netwerk: `
+>> NETWERK DIAGNOSE...
+
+SECTOR A (NOORD):      [ONLINE]
+SECTOR B (STAD):       [ONLINE]
+SECTOR C (HAVEN):      [STORING] - WISSEL 404
+SECTOR D (GRENS):      [ONLINE]
+
+LET OP: ONDERHOUD GEPLAND VOOR SECTOR C.
+
+<br>
+<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
+<div class="input-line">C:\\HS_SYSTEM\\NET_DIAG> <span class="cursor"></span></div>
+`,
+        berichten: `
+>> INTERNE BERICHTEN
+
+VAN: DIRECTIE SPOORWEGEN
+AAN: ALLE STATIONSCHETS
+ONDERWERP: KOFFIEAUTOMATEN
+
+GELIEVE NIET MEER TE SCHOPPEN TEGEN DE
+KOFFIEAUTOMAAT OP PERRON 2. DEZE IS 
+TECHNISCH GEVOELIG. BIJ VOORBAAT DANK.
+
+EINDE BERICHT.
+
+<br>
+<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
+<div class="input-line">C:\\HS_SYSTEM\\MSG> <span class="cursor"></span></div>
+`
+    };
+
+    // Functie om de boot sequence te draaien
+    async function runBootSequence() {
+        for (let line of bootLines) {
+            const p = document.createElement('div');
+            p.textContent = line;
+            output.appendChild(p);
+            // Scroll naar beneden
+            output.scrollTop = output.scrollHeight;
+            // Wacht willekeurige tijd tussen 100ms en 400ms voor "realisme"
+            await new Promise(r => setTimeout(r, Math.random() * 300 + 100));
+        }
+        await new Promise(r => setTimeout(r, 800)); // Korte pauze na boot
+        loadPage('menu', false);
+    }
+
+    // Functie om pagina's te laden
+    function loadPage(pageKey, clear = true) {
+        if (clear) output.innerHTML = ''; // Scherm wissen
+        
+        const content = pages[pageKey];
+        
+        // Simpel effect: Voeg content direct toe (voor snelheid na boot)
+        // Je kunt hier ook een type-effect toevoegen als je wilt, 
+        // maar dat kan irritant worden bij navigatie.
+        const div = document.createElement('div');
+        div.innerHTML = content;
+        output.appendChild(div);
+
+        // Als we in het menu zijn, start de klok
+        if (pageKey === 'menu') {
+            startClock();
+        }
+    }
+
+    function startClock() {
+        const clockEl = document.getElementById('clock');
+        if (clockEl) {
+            const now = new Date();
+            clockEl.innerText = now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
+        }
+    }
+
+    // START DE TERMINAL
+    runBootSequence();
+
+</script>
+
+</body>
+</html>
