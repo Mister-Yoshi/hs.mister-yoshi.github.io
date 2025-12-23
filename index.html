@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal V6.5</title>
+  <title>HS | Terminal V6.6</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -66,20 +66,20 @@
   <div id="boot-screen"><div id="boot-log"></div></div>
 
   <div id="search-overlay">
-    <p>> VERBINDING MAKEN MET EXTERNE DATABASE...</p>
-    <p id="search-query"></p>
-    <p>> ENCRYPTIE... OK</p>
-    <p>> GOOGLE GATEWAY GEOPEND.</p>
-    <p>> DOORSTUREN...</p>
+    <p id="txt-search-init">> VERBINDING MAKEN MET EXTERNE DATABASE...</p>
+    <p id="search-query-display"></p>
+    <p id="txt-search-encrypt">> ENCRYPTIE... OK</p>
+    <p id="txt-search-gate">> GOOGLE GATEWAY GEOPEND.</p>
+    <p id="txt-search-redir">> DOORSTUREN...</p>
   </div>
 
   <div class="container" id="main-ui">
     <header>
       <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
-      <div class="logo-container"><img src="images/HS.jpg" alt="HS Logo"></div>
+      <div class="logo-container"><img src="images/hs.jpg" alt="HS Logo"></div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 6.5 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status">> VERSIE 6.6 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
@@ -120,8 +120,38 @@
   <script>
     let currentLang = 'nl';
     const translations = {
-      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.5 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
-      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.5 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
+      nl: { 
+        title: "Hoggynesische Spoorwegen", 
+        status: "> VERSIE 6.6 | STATUS: OPERATIONEEL", 
+        search: "SYSTEEM ZOEKEN...", 
+        searchBtn: "ZOEK", 
+        nmbs: "NMBS", 
+        nmbsInt: "NMBS International", 
+        feature: "VERTREKSTATEN", 
+        footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", 
+        langBtn: "FRANÇAIS",
+        sInit: "> VERBINDING MAKEN MET EXTERNE DATABASE...",
+        sQuery: "> ZOEKOPDRACHT: ",
+        sEncrypt: "> ENCRYPTIE... OK",
+        sGate: "> GOOGLE GATEWAY GEOPEND.",
+        sRedir: "> DOORSTUREN..."
+      },
+      fr: { 
+        title: "Chemin de fer Hoggynésiens", 
+        status: "> VERSION 6.6 | ÉTAT: OPÉRATIONNEL", 
+        search: "RECHERCHE SYSTÈME...", 
+        searchBtn: "CHERCHER", 
+        nmbs: "SNCB", 
+        nmbsInt: "SNCB International", 
+        feature: "TABLEAUX DE DÉPART", 
+        footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", 
+        langBtn: "NEDERLANDS",
+        sInit: "> CONNEXION À LA BASE DE DONNÉES EXTERNE...",
+        sQuery: "> REQUÊTE: ",
+        sEncrypt: "> CHIFFREMENT... OK",
+        sGate: "> PASSERELLE GOOGLE OUVERTE.",
+        sRedir: "> REDIRECTION..."
+      }
     };
 
     let audioCtx;
@@ -146,11 +176,11 @@
       const q = document.getElementById('searchInput').value;
       if (!q) return;
 
+      const t = translations[currentLang];
       const overlay = document.getElementById('search-overlay');
-      document.getElementById('search-query').textContent = `> ZOEKOPDRACHT: "${q}"`;
+      document.getElementById('search-query-display').textContent = `${t.sQuery} "${q}"`;
       overlay.style.display = 'block';
 
-      // Vertraging voor de 'coolness factor'
       await new Promise(r => setTimeout(r, 900));
       window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
       
@@ -161,6 +191,8 @@
       playClick();
       currentLang = currentLang === 'nl' ? 'fr' : 'nl';
       const t = translations[currentLang];
+      
+      // Hoofd UI vertalen
       document.getElementById('txt-title').textContent = t.title;
       document.getElementById('txt-status').textContent = t.status;
       document.getElementById('txt-search-placeholder').placeholder = t.search;
@@ -170,10 +202,16 @@
       document.getElementById('txt-feature-title').textContent = t.feature;
       document.getElementById('txt-footer').textContent = t.footer;
       document.getElementById('langBtn').textContent = t.langBtn;
+
+      // Zoek Overlay vertalen
+      document.getElementById('txt-search-init').textContent = t.sInit;
+      document.getElementById('txt-search-encrypt').textContent = t.sEncrypt;
+      document.getElementById('txt-search-gate').textContent = t.sGate;
+      document.getElementById('txt-search-redir').textContent = t.sRedir;
     }
 
     async function runBoot() {
-      const messages = ["SYSTEM INIT: HS-CORE-V6.5", "LOADING ASSETS FROM REPO... OK", "STABILIZING INTERFACE... OK", "READY."];
+      const messages = ["SYSTEM INIT: HS-CORE-V6.6", "LANGUAGE MODULES: NL/FR LOADED", "READY."];
       const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
         const p = document.createElement('p');
