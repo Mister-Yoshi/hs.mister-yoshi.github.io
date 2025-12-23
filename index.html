@@ -107,6 +107,7 @@
           <iframe src="https://treinposities.nl/embedvertrekstaat/maastricht"></iframe>
           <iframe src="https://treinposities.nl/embedvertrekstaat/breda"></iframe>
           <iframe src="https://treinposities.nl/embedvertrekstaat/arnhem-centraal"></iframe>
+          <iframe src="https://treinposities.nl/embedvertrekstaat/utrecht-centraal"></iframe>
         </div>
       </div>
     </main>
@@ -121,7 +122,7 @@
     const translations = {
       nl: { 
         title: "Hoggynesische Spoorwegen", 
-        status: "> VERSIE 6.8 | STATUS: OPERATIONEEL", 
+        status: "> VERSIE 6.9 | STATUS: OPERATIONEEL", 
         search: "SYSTEEM ZOEKEN...", 
         searchBtn: "ZOEK", 
         ns: "NS", nsi: "NS International", tp: "Treinposities", nmbs: "NMBS", nmbsi: "NMBS International",
@@ -132,7 +133,7 @@
       },
       fr: { 
         title: "Chemin de fer Hoggynésiens", 
-        status: "> VERSION 6.8 | ÉTAT: OPÉRATIONNEL", 
+        status: "> VERSION 6.9 | ÉTAT: OPÉRATIONNEL", 
         search: "RECHERCHE SYSTÈME...", 
         searchBtn: "CHERCHER", 
         ns: "NS", nsi: "NS International", tp: "Treinposities", nmbs: "SNCB", nmbsi: "SNCB International",
@@ -199,7 +200,7 @@
 
     async function runBoot() {
       updateUI(); // Zet taal direct goed
-      const messages = ["SYSTEM INIT: HS-CORE-V6.8", "CHECKING images/hs.jpg... OK", "READY."];
+      const messages = ["SYSTEM INIT: HS-CORE-V6.9", "CHECKING images/hs.jpg... OK", "READY."];
       const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
         const p = document.createElement('p'); bootLog.appendChild(p);
