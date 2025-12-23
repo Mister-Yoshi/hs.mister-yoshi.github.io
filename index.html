@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal Internal Search</title>
+  <title>HS | Terminal V6.5</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -39,15 +39,13 @@
     .logo-container { height: 85px; width: 150px; border: 1px solid var(--p-color); overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
     .logo-container img { height: 100%; width: auto; filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg) saturate(10); }
 
-    .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 20px; background: rgba(0, 10, 0, 0.3); }
+    .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 40px; background: rgba(0, 10, 0, 0.3); }
     .search-bar form { display: flex; gap: 15px; }
     .search-bar input { flex: 1; background: transparent; border: 1px solid var(--p-dim); color: var(--p-color); font-family: inherit; font-size: 1.6rem; padding: 10px; outline: none; }
     .search-bar button { background: var(--p-color); color: #000; border: none; padding: 0 35px; font-family: inherit; font-size: 1.6rem; font-weight: bold; cursor: pointer; }
 
-    /* Search Results Terminal */
-    #search-results-container { display: none; border: var(--border-style); margin-bottom: 40px; background: #000; position: relative; }
-    #search-results-container iframe { width: 100%; height: 500px; border: none; filter: invert(1) hue-rotate(90deg) brightness(1.1) contrast(1.2) sepia(1) saturate(5); }
-    .close-search { position: absolute; top: 5px; right: 10px; color: var(--p-color); cursor: pointer; font-size: 1.5rem; z-index: 10; }
+    /* Search Console Overlay */
+    #search-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2500; padding: 100px; color: var(--p-color); font-size: 1.5rem; border: 5px solid var(--p-dim); margin: 20px; box-shadow: 0 0 50px rgba(0,255,0,0.2); }
 
     .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 50px; }
     .interactive-link { border: 1px solid var(--p-dim); padding: 18px; text-align: center; text-decoration: none; color: var(--p-color); font-size: 1.6rem; transition: all 0.2s; }
@@ -65,33 +63,32 @@
   <div class="monitor-overlay"></div>
   <div class="crt-curve"></div>
 
-  <div id="boot-screen">
-    <div id="boot-log"></div>
+  <div id="boot-screen"><div id="boot-log"></div></div>
+
+  <div id="search-overlay">
+    <p>> VERBINDING MAKEN MET EXTERNE DATABASE...</p>
+    <p id="search-query"></p>
+    <p>> ENCRYPTIE... OK</p>
+    <p>> GOOGLE GATEWAY GEOPEND.</p>
+    <p>> DOORSTUREN...</p>
   </div>
 
   <div class="container" id="main-ui">
     <header>
       <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
-      <div class="logo-container">
-        <img src="images/hs.jpg" alt="HS Logo">
-      </div>
+      <div class="logo-container"><img src="images/HS.jpg" alt="HS Logo"></div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 6.2 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status">> VERSIE 6.5 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
     <main>
       <div class="search-bar">
-        <form id="searchForm" onsubmit="handleSearch(event)">
-          <input type="text" id="searchInput" placeholder="SYSTEEM ZOEKEN..." name="q" onfocus="playClick()">
+        <form onsubmit="handleSearch(event)">
+          <input type="text" id="searchInput" placeholder="SYSTEEM ZOEKEN..." name="q" onfocus="playClick()" autocomplete="off">
           <button type="submit" id="txt-search-btn">ZOEK</button>
         </form>
-      </div>
-
-      <div id="search-results-container">
-        <span class="close-search" onclick="closeSearch()">[X] CLOSE</span>
-        <iframe id="searchFrame" src=""></iframe>
       </div>
 
       <div class="links">
@@ -123,8 +120,8 @@
   <script>
     let currentLang = 'nl';
     const translations = {
-      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.2 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
-      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.2 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
+      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.5 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
+      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.5 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
     };
 
     let audioCtx;
@@ -143,24 +140,21 @@
       osc.stop(audioCtx.currentTime + 0.05);
     }
 
-    // Zoekfunctie die de pagina niet verlaat
-    function handleSearch(event) {
+    async function handleSearch(event) {
       event.preventDefault();
       playClick();
-      const query = document.getElementById('searchInput').value;
-      if (query) {
-        const frame = document.getElementById('searchFrame');
-        const container = document.getElementById('search-results-container');
-        // We gebruiken DuckDuckGo omdat Google vaak iFrames blokkeert
-        frame.src = `https://duckduckgo.com/?q=${encodeURIComponent(query)}&kp=-2&k1=-1`;
-        container.style.display = 'block';
-      }
-    }
+      const q = document.getElementById('searchInput').value;
+      if (!q) return;
 
-    function closeSearch() {
-      playClick();
-      document.getElementById('search-results-container').style.display = 'none';
-      document.getElementById('searchFrame').src = "";
+      const overlay = document.getElementById('search-overlay');
+      document.getElementById('search-query').textContent = `> ZOEKOPDRACHT: "${q}"`;
+      overlay.style.display = 'block';
+
+      // Vertraging voor de 'coolness factor'
+      await new Promise(r => setTimeout(r, 900));
+      window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+      
+      setTimeout(() => { overlay.style.display = 'none'; }, 500);
     }
 
     function toggleLanguage() {
@@ -178,24 +172,17 @@
       document.getElementById('langBtn').textContent = t.langBtn;
     }
 
-    const messages = [
-      "SYSTEM INIT: HS-CORE-V6.2",
-      "TERMINAL SEARCH MODULE... LOADED",
-      "SYNCING DATA NODES... OK",
-      "SYSTEM READY."
-    ];
-
     async function runBoot() {
+      const messages = ["SYSTEM INIT: HS-CORE-V6.5", "LOADING ASSETS FROM REPO... OK", "STABILIZING INTERFACE... OK", "READY."];
       const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
         const p = document.createElement('p');
-        p.style.margin = "4px 0";
         bootLog.appendChild(p);
         for (let char of msg) {
           p.textContent += char;
           await new Promise(r => setTimeout(r, 20));
         }
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 150));
       }
       setTimeout(() => {
         document.getElementById('boot-screen').style.opacity = '0';
@@ -203,9 +190,8 @@
           document.getElementById('boot-screen').style.display = 'none';
           document.getElementById('main-ui').style.display = 'block';
         }, 600);
-      }, 400);
+      }, 300);
     }
-
     window.onload = runBoot;
   </script>
 </body>
