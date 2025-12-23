@@ -1,298 +1,294 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoggynesische Spoorwegen | Publiek Netwerk</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HS | Terminal Netwerk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --p-color: #33ff00; /* Fel groen */
+      --p-dim: #1a8000;   /* Gedimd groen */
+      --bg-color: #050505;
+      --border-style: 2px solid var(--p-color);
+    }
 
-        :root {
-            --term-color: #33ff00; /* Fel groen */
-            --term-dim: #1a8000;   /* Dim groen */
-            --bg-color: #0a0a0a;   /* Bijna zwart */
-            --glass-reflection: rgba(255, 255, 255, 0.02);
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            background-color: #000;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'VT323', monospace;
-            overflow: hidden;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      font-family: 'VT323', monospace;
+      color: var(--p-color);
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-        /* --- DE BEELDBUIS (MONITOR RAND & VORM) --- */
-        .crt-monitor {
-            width: 95%;
-            max-width: 1000px;
-            height: 90vh;
-            background-color: var(--bg-color);
-            border-radius: 20px;
-            position: relative;
-            box-shadow: 0 0 0 15px #111, 0 0 20px 20px rgba(0,0,0,0.5); /* De fysieke rand */
-            overflow: hidden;
-        }
+    /* --- CRT & SCANLINE EFFECTS --- */
+    .monitor-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 3px 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
 
-        /* --- HET SCHERM EFFECT (KROMMING & GLOW) --- */
-        .screen-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 20px;
-            background: 
-                radial-gradient(circle, rgba(18, 16, 16, 0) 60%, rgba(0, 0, 0, 0.6) 100%), /* Vignette (donkere hoeken) */
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); /* Scanlines vast */
-            background-size: 100% 100%, 100% 4px;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-        }
+    .monitor-overlay::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.4) 100%);
+      pointer-events: none;
+    }
 
-        /* --- DE SCANLIJN DIE OMLAAG BEWEEGT --- */
-        .scan-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(51, 255, 0, 0.1);
-            position: absolute;
-            z-index: 11;
-            opacity: 0.3;
-            animation: scan 6s linear infinite;
-            pointer-events: none;
-        }
+    /* --- CONTAINER --- */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 20px;
+      position: relative;
+      text-shadow: 0 0 5px var(--p-color);
+      animation: flicker 0.15s infinite;
+    }
 
-        @keyframes scan {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
+    @keyframes flicker {
+      0% { opacity: 0.99; }
+      100% { opacity: 1; }
+    }
 
-        /* --- CONTENT CONTAINER --- */
-        .terminal-content {
-            padding: 40px;
-            color: var(--term-color);
-            text-shadow: 0 0 2px var(--term-dim), 0 0 8px var(--term-color);
-            height: 100%;
-            box-sizing: border-box;
-            overflow-y: auto;
-            /* Scrollbar styling voor webkit */
-            scrollbar-width: thin;
-            scrollbar-color: var(--term-color) #000;
-        }
+    /* --- HEADER --- */
+    header {
+      border: var(--border-style);
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      background: rgba(0, 20, 0, 0.3);
+    }
 
-        /* Scrollbar aanpassing */
-        .terminal-content::-webkit-scrollbar { width: 8px; }
-        .terminal-content::-webkit-scrollbar-track { background: #000; }
-        .terminal-content::-webkit-scrollbar-thumb { background: var(--term-color); border: 1px solid #000; }
+    .logo-link img {
+      height: 80px;
+      filter: grayscale(1) sepia(1) hue-rotate(60deg) brightness(1.2);
+      border: 1px solid var(--p-color);
+    }
 
-        /* --- NAVIGATIE BALK --- */
-        .nav-bar {
-            border-bottom: 2px solid var(--term-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+    .title-block h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
+    .title-block p {
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
 
-        .nav-item {
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--term-color);
-            font-size: 1.3rem;
-            padding: 2px 8px;
-        }
+    /* --- SEARCH BAR --- */
+    .search-bar {
+      margin-bottom: 40px;
+      border: var(--border-style);
+      padding: 15px;
+      background: rgba(0, 30, 0, 0.2);
+    }
 
-        .nav-item:hover, .nav-item.active {
-            background-color: var(--term-color);
-            color: #000;
-            text-shadow: none;
-        }
+    .search-bar form {
+      display: flex;
+      gap: 15px;
+    }
 
-        /* --- PAGINA INHOUD --- */
-        .page {
-            display: none; /* Verberg alles standaard */
-            animation: fadeIn 0.3s;
-        }
-        
-        .page.active {
-            display: block;
-        }
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--p-dim);
+      color: var(--p-color);
+      font-family: inherit;
+      font-size: 1.5rem;
+      padding: 10px;
+      outline: none;
+    }
 
-        h1, h2, h3 { text-transform: uppercase; font-weight: normal; margin-top: 0; }
-        p, li { font-size: 1.2rem; line-height: 1.5; max-width: 800px;}
-        
-        .logo-ascii {
-            white-space: pre;
-            font-size: 10px;
-            line-height: 10px;
-            margin-bottom: 10px;
-            font-family: monospace;
-            opacity: 0.8;
-        }
+    .search-bar input:focus {
+      border-color: var(--p-color);
+      background: rgba(51, 255, 0, 0.05);
+    }
 
-        /* --- TABELLEN --- */
-        table { width: 100%; max-width: 800px; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; border-bottom: 1px dashed var(--term-color); padding: 5px; }
-        td { padding: 5px; }
-        tr:hover { background-color: rgba(51, 255, 0, 0.1); }
+    .search-bar button {
+      background: var(--p-color);
+      color: #000;
+      border: none;
+      padding: 0 30px;
+      font-family: inherit;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
 
-        /* --- TYPING EFFECT --- */
-        .type-text::after {
-            content: '█';
-            animation: blink 1s infinite;
-        }
+    .search-bar button:hover {
+      background: #fff;
+    }
 
-        @keyframes blink { 50% { opacity: 0; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* --- LINKS GRID --- */
+    .links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 50px;
+    }
 
-    </style>
+    .interactive-link {
+      border: 1px solid var(--p-dim);
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--p-color);
+      font-size: 1.4rem;
+      transition: all 0.2s;
+      background: rgba(0, 10, 0, 0.2);
+    }
+
+    .interactive-link:hover {
+      background: var(--p-color);
+      color: #000;
+      text-shadow: none;
+    }
+
+    .interactive-link::before {
+      content: "[ ";
+    }
+    .interactive-link::after {
+      content: " ]";
+    }
+
+    /* --- FEATURE BOX & IFRAMES --- */
+    .feature-box {
+      border: var(--border-style);
+      padding: 25px;
+      margin-bottom: 60px;
+      background: rgba(0, 15, 0, 0.2);
+    }
+
+    .feature-box h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      border-bottom: 1px solid var(--p-dim);
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .feature-box p {
+      font-size: 1.3rem;
+      line-height: 1.4;
+      margin-bottom: 25px;
+    }
+
+    .iframe-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 350px;
+      border: 1px solid var(--p-dim);
+      filter: grayscale(1) sepia(1) hue-rotate(60deg) invert(0.9) brightness(0.8);
+      /* Invert zorgt dat de witte achtergrond van externe sites donker wordt */
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      border-top: var(--border-style);
+      padding: 40px 20px;
+      background: rgba(0, 10, 0, 0.4);
+    }
+
+    footer p {
+      margin: 15px 0;
+      font-size: 1.1rem;
+      max-width: 900px;
+      line-height: 1.3;
+    }
+
+    footer strong {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header { flex-direction: column; text-align: center; }
+      .search-bar form { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="crt-monitor">
-    <div class="screen-overlay"></div>
-    <div class="scan-bar"></div>
-    
-    <div class="terminal-content">
+  <div class="monitor-overlay"></div>
+
+  <div class="container">
+    <header>
+      <a href="#" class="logo-link">
+        <img src="images/HS.jpg" alt="Logo HS">
+      </a>
+      <div class="title-block">
+        <h1>Hoggynesische Spoorwegen</h1>
+        <p>> SYSTEEM-STATUS: OPERATIONEEL | HUB-ID: 21-A</p>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="search-bar">
+        <form action="https://www.google.com/search">
+          <input type="text" placeholder="COMMANDO INVOEREN..." name="q">
+          <button type="submit">EXECUTE</button>
+        </form>
+      </div>
+
+      <div class="links">
+        <a href="https://www.ns.nl/" class="interactive-link">NS_KERN</a>
+        <a href="https://www.nsinternational.com/" class="interactive-link">INT_REIS</a>
+        <a href="https://treinposities.nl/" class="interactive-link">RADAR_NL</a>
+        <a href="https://www.belgiantrain.be/" class="interactive-link">NMBS_SYS</a>
+        <a href="https://chatgpt.com/" class="interactive-link">AI_CORE</a>
+        <a href="https://github.com/" class="interactive-link">GIT_REPO</a>
+        <a href="https://www.b-europe.com/" class="interactive-link">BE_INT</a>
+        <a href="https://mister-yoshi.github.io/index-fr.html" class="interactive-link">LANG_FR</a>
+      </div>
+
+      <div class="feature-box">
+        <h2>VERTREKSTATEN (REALTIME)</h2>
+        <p>Data-feed geactiveerd voor sectoren: Assen, Roosendaal, Maastricht en Breda. Scan de matrix hieronder voor actuele tijdstippen.</p>
         
-        <div class="nav-bar">
-            <div>
-                <div class="logo-ascii">
-  _  _   ___ 
- | || | / __|
- | __ | \__ \
- |_||_| |___/ 
-                </div>
-                <span>HOGGYNESISCHE SPOORWEGEN</span>
-            </div>
-            <div class="nav-links">
-                <span class="nav-item active" onclick="navigate('home', this)">[01] HOME</span>
-                <span class="nav-item" onclick="navigate('nieuws', this)">[02] STATUS</span>
-                <span class="nav-item" onclick="navigate('routes', this)">[03] ROUTES</span>
-                <span class="nav-item" onclick="navigate('contact', this)">[04] COMM</span>
-            </div>
+        <div class="iframe-container">
+          <iframe src="https://treinposities.nl/embedvertrekstaat/assen"></iframe>
+          <iframe src="https://treinposities.nl/embedvertrekstaat/roosendaal"></iframe>
+          <iframe src="https://treinposities.nl/embedvertrekstaat/maastricht"></iframe>
+          <iframe src="https://treinposities.nl/embedvertrekstaat/breda"></iframe>
         </div>
+      </div>
+    </main>
 
-        <div id="home" class="page active">
-            <h2 id="typing-header">WELKOM REIZIGER.</h2>
-            <p>U bent verbonden met het HS Publieke Informatie Netwerk (HS-PIN).</p>
-            <p>De Hoggynesische Spoorwegen garandeert (grotendeels) veilig transport door de omliggende sectoren. Gebruik de navigatiebalk hierboven om uw reis te plannen.</p>
-            <br>
-            <div style="border: 1px solid var(--term-color); padding: 15px;">
-                <strong>>> BERICHT VAN DE DAG:</strong><br>
-                Vergeet niet uw bagage in de gaten te houden op Station Centraal i.v.m. recente meldingen van scrap-diefstal.
-            </div>
-        </div>
-
-        <div id="nieuws" class="page">
-            <h2>NETWERK STATUS RAPPORT</h2>
-            <p>LAATSTE UPDATE: VANDAAG, 08:00 UUR</p>
-            <table>
-                <tr>
-                    <th>TRAJECT</th>
-                    <th>STATUS</th>
-                    <th>MELDING</th>
-                </tr>
-                <tr>
-                    <td>NOORD-ZUID LIJN</td>
-                    <td style="color:var(--term-color)">OPERATIONEEL</td>
-                    <td>GEEN BIJZONDERHEDEN</td>
-                </tr>
-                <tr>
-                    <td>INDUSTRIE-LUS</td>
-                    <td style="color:yellow">VERTRAAGD</td>
-                    <td>SIGNAALSTORING SECTOR 4</td>
-                </tr>
-                <tr>
-                    <td>GRENS SPOOR</td>
-                    <td style="color:red">GESLOTEN</td>
-                    <td>BRUG INSPECTIE</td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="routes" class="page">
-            <h2>ROUTE INFORMATIE</h2>
-            <p>Selecteer uw bestemming voor reistijd-indicatie.</p>
-            <ul>
-                <li>> CENTRAAL STATION (Knooppunt Alpha)</li>
-                <li>> OUDE HAVEN (Goederenoverslag)</li>
-                <li>> NIEUW-HOGGYNESIE (Woonsector)</li>
-                <li>> FABRIEKS COMPLEX (Alleen met pasje)</li>
-            </ul>
-            <p style="margin-top: 20px; border-top: 1px dashed var(--term-color); padding-top:10px;">
-                <em>Let op: Tijden zijn indicatief en afhankelijk van atmosferische omstandigheden.</em>
-            </p>
-        </div>
-
-        <div id="contact" class="page">
-            <h2>COMMUNICATIE KANALEN</h2>
-            <p>Voor klachten, verloren voorwerpen of meldingen van spoorlopen:</p>
-            <br>
-            <p>> FYSIEK LOKET: Perron 1, Loket 4 (09:00 - 14:00)</p>
-            <p>> TELE-TELEX: #492-221-HS</p>
-            <p>> FREQUENTIE: 104.5 FM (Noodkanaal)</p>
-            <br>
-            <form onsubmit="event.preventDefault(); alert('BERICHT VERZONDEN NAAR CENTRALE.');">
-                <p>LAAT EEN BERICHT ACHTER:</p>
-                <input type="text" placeholder="UW NAAM" style="background:transparent; border:none; border-bottom: 1px solid var(--term-color); color: var(--term-color); font-family:inherit; font-size:1.2rem; width: 300px; outline:none;"><br><br>
-                <input type="text" placeholder="ONDERWERP" style="background:transparent; border:none; border-bottom: 1px solid var(--term-color); color: var(--term-color); font-family:inherit; font-size:1.2rem; width: 300px; outline:none;"><br><br>
-                <button style="background:var(--term-color); color:black; border:none; padding: 5px 15px; font-family:inherit; font-size:1.2rem; cursor:pointer; font-weight:bold;">> VERZENDEN</button>
-            </form>
-        </div>
-
-    </div>
-</div>
-
-<script>
-    // Navigatie Logic
-    function navigate(pageId, element) {
-        // Verwijder active class van alle links
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        // Voeg active class toe aan geklikte link
-        element.classList.add('active');
-
-        // Verberg alle paginas
-        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-        
-        // Toon de juiste pagina
-        const activePage = document.getElementById(pageId);
-        activePage.classList.add('active');
-
-        // Trigger typ-effect (optioneel, voor sfeer)
-        // Hier zou je een complexe type-functie kunnen aanroepen als je wilt.
-    }
-
-    // Type-effect bij laden
-    const textToType = "WELKOM REIZIGER.";
-    const headerElement = document.getElementById('typing-header');
-    headerElement.innerText = ""; // Maak leeg
-    headerElement.classList.add('type-text');
-    
-    let i = 0;
-    function typeWriter() {
-        if (i < textToType.length) {
-            headerElement.innerText += textToType.charAt(i);
-            i++;
-            setTimeout(typeWriter, 100); // Snelheid van typen
-        } else {
-             headerElement.classList.remove('type-text'); // Stop knipperen na typen
-        }
-    }
-    
-    // Start typen na korte vertraging
-    setTimeout(typeWriter, 500);
-
-</script>
+    <footer>
+      <p><strong>NS</strong>: Centraal protocol voor transport binnen de Nederlandse perimeter.</p>
+      <p><strong>NS International</strong>: Grensoverschrijdende verbindingen naar bevriende sectoren.</p>
+      <p><strong>Treinposities NL</strong>: Tactische weergave van alle actieve eenheden op het spoor.</p>
+      <p><strong>NMBS</strong>: Beheer van het zuidelijke spoornetwerk.</p>
+      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN. GEAUTORISEERDE TOEGANG VOLGENS PROTOCOL HS-99.</p>
+    </footer>
+  </div>
 
 </body>
 </html>
