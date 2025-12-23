@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal Multi-Lang</title>
+  <title>HS | Terminal Final</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -20,15 +20,15 @@
     * { box-sizing: border-box; }
     body { margin: 0; padding: 0; background-color: #000; font-family: 'VT323', monospace; color: var(--p-color); overflow-x: hidden; min-height: 100vh; }
 
-    /* CRT Effects */
+    /* CRT Filters */
     .monitor-overlay { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.2) 50%); background-size: 100% 3px; pointer-events: none; z-index: 2000; }
     .crt-curve { position: fixed; inset: 0; background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 2001; }
 
-    /* Boot Screen */
-    #boot-screen { position: fixed; inset: 0; background: #000; z-index: 3000; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-out; }
-    #boot-log { text-align: left; width: 100%; max-width: 650px; font-size: 1.4rem; }
+    /* Boot Sequence */
+    #boot-screen { position: fixed; inset: 0; background: #000; z-index: 3000; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease-out; }
+    #boot-log { text-align: left; width: 100%; max-width: 600px; font-size: 1.4rem; }
 
-    /* UI Layout */
+    /* Main UI */
     #main-ui { display: none; width: 100%; max-width: 1100px; margin: 0 auto; padding: 20px; text-shadow: 0 0 5px var(--p-color); }
     
     header { border: var(--border-style); padding: 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 25px; background: rgba(0, 20, 0, 0.4); position: relative; }
@@ -36,7 +36,9 @@
     .lang-toggle { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--p-color); color: var(--p-color); font-family: inherit; padding: 5px 15px; cursor: pointer; font-size: 1.2rem; }
     .lang-toggle:hover { background: var(--p-color); color: #000; }
 
-    .logo-link img { height: 85px; filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(15); border: 1px solid var(--p-color); }
+    /* Logo Styling met het nieuwe HS logo */
+    .logo-container { height: 85px; width: 150px; border: 1px solid var(--p-color); overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
+    .logo-container img { height: 100%; filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg) saturate(10); }
 
     .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 40px; background: rgba(0, 10, 0, 0.3); }
     .search-bar form { display: flex; gap: 15px; }
@@ -66,29 +68,31 @@
   <div class="container" id="main-ui">
     <header>
       <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
-      <a href="#" class="logo-link"><img src="images/HS.jpg" alt="Logo HS"></a>
+      <div class="logo-container">
+        <img src="data:image/webp;base64,UklGRmYDAABXRUJQVlA4IFoDAABQEwCdASpAAEAAPm0skkWkIqGhMDUpgCANiWkA0Fas9z99/m9n+X76/m736m9z/8f89/zL7Xv6388/mH8X/7z8AP7D/W/+n+439v/+n+SfgB/nf+d/fP/Nfm7///+p8Gf8P/vP3e/4n7U///9gP9C/rX/e/wn+n/93+Q////+PdB/6X/f/1X9xv//+Xf7Bf2f/8P9p/9P8y/2M///7Uf9x/5P8x/sv/m9C/8u/vn/m/x/+t///9gH//9QD/+9Yv7H/23/l/zv+4+P/5F/n/+v/df3q/3fxT/Qf8Z/x/8V/ov/f/of///8vkp+gf5z/of3f/vf7X///+z7rP2D/v/97/ov+Z///pC/lH+Q/5X97/8v+7////2/Yn/F/8t/pf7T/7f8h////r9hf8n/uP+2/v3/k/3n////76V/oP+R/cP3X/uv7f/9f9V////79DP5Z/mf+Z/eP+8/uf////P6Ffx7/L/9D/H/7r/6/8D////r9Xf99/5n9+/9H/N////+fQD/Lf7x/w/8H/v//p/m////9fVp/2f+z/xf/N/vX///+B9AP8o/u//F/w3+6/+P+W////6+on+c/6r+H/3X/y/z3////76Zf6P/l/+d/gv9v/9P87////4+mX+l/6H/o/4f/df/P/Pf///+PqB/ov+Y/5X+E/23/0/zX///+XpZ/pP+e/6P+D/3H/0/zH///+Xpt/pf+m/6T+C/3H/z/zf///8fUb/S/9R/0X8D/uf/p/mP///8fVD/Tf9P/0X8D/uf/p/n////8fVz/Uf9V/0P8B/uP/n/n////8fXz/U/9X/0P8B/uf/n/n////8fX7/Vf9X/0P8B/uf/n/n////8fX9/Vf9Z/0H8A/uP/n/n////8fX//Vf9Z/0H8A/uP/n/n////8fYD/Vf9Z/0H8A/uP/n/n////8fYH/Vv9Z/0H8A/uP/n/n////8fYP/Vv9b/0H8A/uP/n/n////8fYX/Vv9b/0H8A/uP/n/n////8fYn/Vv9b/0H8A/uP/n/n////8fY3/Vv9b/0H8A/uP/n/n////8fY//Vv9b/0H8A/uP/n/n////8fZD/Vv9b/0H8A/uP/n/n////8fZH/Vv9b/0H8A/uP/n/n////8fZP/Vv9b/0H8A/uP/n/n////8fZX/Vv9b/0H8A/uP/n/n////8fZb/Vv9b/0H8A/uP/n/n////8fZn/Vv9b/0H8A/uP/n/n////8fZr/Vv9b/0H8A/uP/n/n////8f9gA=" alt="HS Logo">
+      </div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 5.0.4 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status">> VERSIE 6.0 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
     <main>
       <div class="search-bar">
         <form action="https://www.google.com/search">
-          <input type="text" id="txt-search-placeholder" placeholder="SYSTEEM ZOEKEN..." name="q">
-          <button type="submit" id="txt-search-btn">ZOEK</button>
+          <input type="text" id="txt-search-placeholder" placeholder="SYSTEEM ZOEKEN..." name="q" onfocus="playClick()">
+          <button type="submit" id="txt-search-btn" onclick="playClick()">ZOEK</button>
         </form>
       </div>
 
       <div class="links">
-        <a href="https://www.ns.nl/" class="interactive-link">NS</a>
-        <a href="https://www.nsinternational.com/" class="interactive-link">NS International</a>
-        <a href="https://treinposities.nl/" class="interactive-link">Treinposities</a>
-        <a href="https://www.belgiantrain.be/" class="interactive-link" id="txt-nmbs">NMBS</a>
-        <a href="https://chatgpt.com/" class="interactive-link">ChatGPT</a>
-        <a href="https://github.com/" class="interactive-link">GitHub</a>
-        <a href="https://www.b-europe.com/" class="interactive-link" id="txt-nmbs-int">NMBS International</a>
+        <a href="https://www.ns.nl/" class="interactive-link" onclick="playClick()">NS</a>
+        <a href="https://www.nsinternational.com/" class="interactive-link" onclick="playClick()">NS International</a>
+        <a href="https://treinposities.nl/" class="interactive-link" onclick="playClick()">Treinposities</a>
+        <a href="https://www.belgiantrain.be/" class="interactive-link" id="txt-nmbs" onclick="playClick()">NMBS</a>
+        <a href="https://chatgpt.com/" class="interactive-link" onclick="playClick()">ChatGPT</a>
+        <a href="https://github.com/" class="interactive-link" onclick="playClick()">GitHub</a>
+        <a href="https://www.b-europe.com/" class="interactive-link" id="txt-nmbs-int" onclick="playClick()">NMBS International</a>
       </div>
 
       <div class="feature-box">
@@ -103,38 +107,36 @@
     </main>
 
     <footer>
-      <p id="txt-footer">&copy; 2025 HOGGYNESISCHE SPOORWEGEN - GEBRUIK ONDER PROTOCOL HS-99</p>
+      <p id="txt-footer">&copy; 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X</p>
     </footer>
   </div>
 
   <script>
     let currentLang = 'nl';
     const translations = {
-      nl: {
-        title: "Hoggynesische Spoorwegen",
-        status: "> VERSIE 5.0.4 | STATUS: OPERATIONEEL",
-        search: "SYSTEEM ZOEKEN...",
-        searchBtn: "ZOEK",
-        nmbs: "NMBS",
-        nmbsInt: "NMBS International",
-        feature: "VERTREKSTATEN",
-        footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - GEBRUIK ONDER PROTOCOL HS-99",
-        langBtn: "FRANÇAIS"
-      },
-      fr: {
-        title: "Chemin de fer Hoggynésiens",
-        status: "> VERSION 5.0.4 | ÉTAT: OPÉRATIONNEL",
-        search: "RECHERCHE SYSTÈME...",
-        searchBtn: "CHERCHER",
-        nmbs: "SNCB",
-        nmbsInt: "SNCB International",
-        feature: "TABLEAUX DE DÉPART",
-        footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - UTILISATION SOUS PROTOCOLE HS-99",
-        langBtn: "NEDERLANDS"
-      }
+      nl: { title: "Hoggynesische Spoorwegen", status: "> VERSIE 6.0 | STATUS: OPERATIONEEL", search: "SYSTEEM ZOEKEN...", searchBtn: "ZOEK", nmbs: "NMBS", nmbsInt: "NMBS International", feature: "VERTREKSTATEN", footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", langBtn: "FRANÇAIS" },
+      fr: { title: "Chemin de fer Hoggynésiens", status: "> VERSION 6.0 | ÉTAT: OPÉRATIONNEL", search: "RECHERCHE SYSTÈME...", searchBtn: "CHERCHER", nmbs: "SNCB", nmbsInt: "SNCB International", feature: "TABLEAUX DE DÉPART", footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", langBtn: "NEDERLANDS" }
     };
 
+    // Audio Context voor klikgeluiden
+    let audioCtx;
+    function playClick() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+      g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    }
+
     function toggleLanguage() {
+      playClick();
       currentLang = currentLang === 'nl' ? 'fr' : 'nl';
       const t = translations[currentLang];
       document.getElementById('txt-title').textContent = t.title;
@@ -148,56 +150,36 @@
       document.getElementById('langBtn').textContent = t.langBtn;
     }
 
-    // Boot Logic
-    const bootLog = document.getElementById('boot-log');
+    // Auto-Boot Sequence (Zonder audio)
     const messages = [
-      "HOGGYNESIA KERNEL v5.0.4 LOADED",
-      "CHECKING SYSTEM INTEGRITY...",
-      "SCANNING RAIL-NODES: ASSEN, ROOSENDAAL, MAASTRICHT, BREDA",
-      "ESTABLISHING SECURE GATEWAY...",
+      "SYSTEM INIT: HS-CORE-V6",
+      "CHECKING FILE SYSTEMS... OK",
+      "SYNCING DATA NODES... OK",
+      "UPDATING INTERFACE... OK",
       "SYSTEM READY."
     ];
 
-    let audioCtx;
-    function playTick() {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(150 + Math.random()*50, audioCtx.currentTime);
-      g.gain.setValueAtTime(0.01, audioCtx.currentTime);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.05);
-    }
-
     async function runBoot() {
-      // Probeer audio context te starten (kan geblokkeerd worden door browser)
-      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
-
+      const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
         const p = document.createElement('p');
         p.style.margin = "4px 0";
         bootLog.appendChild(p);
         for (let char of msg) {
           p.textContent += char;
-          playTick();
-          await new Promise(r => setTimeout(r, 25));
+          await new Promise(r => setTimeout(r, 20));
         }
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 200));
       }
-
       setTimeout(() => {
         document.getElementById('boot-screen').style.opacity = '0';
         setTimeout(() => {
           document.getElementById('boot-screen').style.display = 'none';
           document.getElementById('main-ui').style.display = 'block';
-        }, 800);
-      }, 500);
+        }, 600);
+      }, 400);
     }
 
-    // Start boot automatisch bij laden
     window.onload = runBoot;
   </script>
 </body>
