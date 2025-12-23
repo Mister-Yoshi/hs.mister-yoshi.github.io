@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal V6.6</title>
+  <title>HS | Terminal V6.7</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -44,7 +44,6 @@
     .search-bar input { flex: 1; background: transparent; border: 1px solid var(--p-dim); color: var(--p-color); font-family: inherit; font-size: 1.6rem; padding: 10px; outline: none; }
     .search-bar button { background: var(--p-color); color: #000; border: none; padding: 0 35px; font-family: inherit; font-size: 1.6rem; font-weight: bold; cursor: pointer; }
 
-    /* Search Console Overlay */
     #search-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2500; padding: 100px; color: var(--p-color); font-size: 1.5rem; border: 5px solid var(--p-dim); margin: 20px; box-shadow: 0 0 50px rgba(0,255,0,0.2); }
 
     .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 50px; }
@@ -62,7 +61,6 @@
 
   <div class="monitor-overlay"></div>
   <div class="crt-curve"></div>
-
   <div id="boot-screen"><div id="boot-log"></div></div>
 
   <div id="search-overlay">
@@ -79,7 +77,7 @@
       <div class="logo-container"><img src="images/hs.jpg" alt="HS Logo"></div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 6.6 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status">> VERSIE 6.7 | STATUS: OPERATIONEEL</p>
       </div>
     </header>
 
@@ -92,13 +90,13 @@
       </div>
 
       <div class="links">
-        <a href="https://www.ns.nl/" class="interactive-link" onclick="playClick()">NS</a>
-        <a href="https://www.nsinternational.com/" class="interactive-link" onclick="playClick()">NS International</a>
-        <a href="https://treinposities.nl/" class="interactive-link" onclick="playClick()">Treinposities</a>
-        <a href="https://www.belgiantrain.be/" class="interactive-link" id="txt-nmbs" onclick="playClick()">NMBS</a>
+        <a href="https://www.ns.nl/" class="interactive-link" onclick="playClick()" id="btn-ns">NS</a>
+        <a href="https://www.nsinternational.com/" class="interactive-link" onclick="playClick()" id="btn-nsi">NS International</a>
+        <a href="https://treinposities.nl/" class="interactive-link" onclick="playClick()" id="btn-tp">Treinposities</a>
+        <a href="https://www.belgiantrain.be/" class="interactive-link" onclick="playClick()" id="btn-nmbs">NMBS</a>
         <a href="https://chatgpt.com/" class="interactive-link" onclick="playClick()">ChatGPT</a>
         <a href="https://github.com/" class="interactive-link" onclick="playClick()">GitHub</a>
-        <a href="https://www.b-europe.com/" class="interactive-link" id="txt-nmbs-int" onclick="playClick()">NMBS International</a>
+        <a href="https://www.b-europe.com/" class="interactive-link" onclick="playClick()" id="btn-nmbsi">NMBS International</a>
       </div>
 
       <div class="feature-box">
@@ -122,9 +120,12 @@
     const translations = {
       nl: { 
         title: "Hoggynesische Spoorwegen", 
-        status: "> VERSIE 6.6 | STATUS: OPERATIONEEL", 
+        status: "> VERSIE 6.7 | STATUS: OPERATIONEEL", 
         search: "SYSTEEM ZOEKEN...", 
         searchBtn: "ZOEK", 
+        ns: "NS",
+        nsi: "NS International",
+        tp: "Treinposities",
         nmbs: "NMBS", 
         nmbsInt: "NMBS International", 
         feature: "VERTREKSTATEN", 
@@ -138,9 +139,12 @@
       },
       fr: { 
         title: "Chemin de fer Hoggynésiens", 
-        status: "> VERSION 6.6 | ÉTAT: OPÉRATIONNEL", 
+        status: "> VERSION 6.7 | ÉTAT: OPÉRATIONNEL", 
         search: "RECHERCHE SYSTÈME...", 
         searchBtn: "CHERCHER", 
+        ns: "NS (Pays-Bas)",
+        nsi: "NS International",
+        tp: "Treinposities",
         nmbs: "SNCB", 
         nmbsInt: "SNCB International", 
         feature: "TABLEAUX DE DÉPART", 
@@ -175,15 +179,12 @@
       playClick();
       const q = document.getElementById('searchInput').value;
       if (!q) return;
-
       const t = translations[currentLang];
       const overlay = document.getElementById('search-overlay');
       document.getElementById('search-query-display').textContent = `${t.sQuery} "${q}"`;
       overlay.style.display = 'block';
-
       await new Promise(r => setTimeout(r, 900));
       window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
-      
       setTimeout(() => { overlay.style.display = 'none'; }, 500);
     }
 
@@ -192,18 +193,23 @@
       currentLang = currentLang === 'nl' ? 'fr' : 'nl';
       const t = translations[currentLang];
       
-      // Hoofd UI vertalen
+      // UI Tekst
       document.getElementById('txt-title').textContent = t.title;
       document.getElementById('txt-status').textContent = t.status;
       document.getElementById('txt-search-placeholder').placeholder = t.search;
       document.getElementById('txt-search-btn').textContent = t.searchBtn;
-      document.getElementById('txt-nmbs').textContent = t.nmbs;
-      document.getElementById('txt-nmbs-int').textContent = t.nmbsInt;
       document.getElementById('txt-feature-title').textContent = t.feature;
       document.getElementById('txt-footer').textContent = t.footer;
       document.getElementById('langBtn').textContent = t.langBtn;
 
-      // Zoek Overlay vertalen
+      // Knoppen/Links specifiek
+      document.getElementById('btn-ns').textContent = t.ns;
+      document.getElementById('btn-nsi').textContent = t.nsi;
+      document.getElementById('btn-tp').textContent = t.tp;
+      document.getElementById('btn-nmbs').textContent = t.nmbs;
+      document.getElementById('btn-nmbsi').textContent = t.nmbsInt;
+
+      // Overlay
       document.getElementById('txt-search-init').textContent = t.sInit;
       document.getElementById('txt-search-encrypt').textContent = t.sEncrypt;
       document.getElementById('txt-search-gate').textContent = t.sGate;
@@ -211,15 +217,12 @@
     }
 
     async function runBoot() {
-      const messages = ["SYSTEM INIT: HS-CORE-V6.6", "LANGUAGE MODULES: NL/FR LOADED", "READY."];
+      const messages = ["SYSTEM INIT: HS-CORE-V6.7", "LOCALIZATION SYNC... OK", "READY."];
       const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
         const p = document.createElement('p');
         bootLog.appendChild(p);
-        for (let char of msg) {
-          p.textContent += char;
-          await new Promise(r => setTimeout(r, 20));
-        }
+        for (let char of msg) { p.textContent += char; await new Promise(r => setTimeout(r, 20)); }
         await new Promise(r => setTimeout(r, 150));
       }
       setTimeout(() => {
