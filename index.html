@@ -3,258 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoggynesische Spoorwegen - Terminal</title>
+    <title>Hoggynesische Spoorwegen - Terminal V2</title>
     <style>
-        /* --- CORE STYLING --- */
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
+        :root {
+            --phosphor-main: #33ff00; /* De groene kleur */
+            --phosphor-dim: #1a8000;
+            --bg-color: #050505;
+        }
+
         body {
-            background-color: #050505;
-            color: #33ff00; /* De klassieke terminal groen */
+            background-color: var(--bg-color);
+            color: var(--phosphor-main);
             font-family: 'VT323', monospace;
             margin: 0;
-            padding: 0;
             height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 1.5rem;
+            text-transform: uppercase;
         }
 
-        /* --- DE MONITOR BEHUIZING (OPTIONEEL, VOOR SFEER) --- */
-        .monitor-casing {
+        /* --- DE BEHUIZING & GROTE SCHERM --- */
+        .crt-container {
             width: 100%;
             height: 100%;
             position: relative;
-            background: radial-gradient(circle, #111 0%, #000 90%);
-        }
-
-        /* --- HET SCHERM ZELF --- */
-        .screen {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            padding: 40px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            text-shadow: 0 0 5px #33ff00, 0 0 10px #33ff00; /* De 'Bloom' glow */
-        }
-
-        /* --- CRT EFFECTEN (SCANLINES & FLIKKERING) --- */
-        .screen::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none; /* Klik erdoorheen */
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.97; }
-            5% { opacity: 0.95; }
-            10% { opacity: 0.9; }
-            15% { opacity: 0.95; }
-            20% { opacity: 0.99; }
-            100% { opacity: 0.9; }
+            background: #000;
+            overflow: hidden;
         }
 
         .screen-content {
-            animation: flicker 0.15s infinite;
-            max-width: 800px;
-            margin: 0 auto;
+            padding: 40px;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            text-shadow: 0 0 4px var(--phosphor-dim), 0 0 2px var(--phosphor-main);
         }
 
-        /* --- TYPOGRAFIE & UI --- */
+        /* --- POST-PROCESSING EFFECTEN --- */
+        /* Scanlines */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.4) 50%,
+                rgba(0,0,0,0.4)
+            );
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* De "Glow" en Kromming (Vignette) */
+        .vignette {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%);
+            z-index: 11;
+            pointer-events: none;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+        }
+
+        /* Lichte flikkering van het hele scherm */
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            5% { opacity: 0.85; }
+            10% { opacity: 0.95; }
+            100% { opacity: 0.95; }
+        }
+        
+        .screen-wrapper {
+            width: 100%;
+            height: 100%;
+            animation: flicker 0.15s infinite;
+        }
+
+        /* --- ELEMENTEN --- */
         h1 {
-            border-bottom: 2px solid #33ff00;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
+            font-weight: normal;
+            margin: 0 0 20px 0;
+            border-bottom: 2px dashed var(--phosphor-main);
+            padding-bottom: 10px;
         }
 
-        .status-bar {
-            border: 1px solid #33ff00;
-            padding: 5px 10px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
+        ul {
+            list-style: none;
+            padding: 0;
         }
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
+        li {
+            margin-bottom: 10px;
         }
 
-        .menu-item {
+        /* Interactieve regels lijken op command lines */
+        .cmd-option {
             cursor: pointer;
-            padding: 10px;
-            border: 1px solid transparent;
-            transition: background 0.1s, color 0.1s;
+            display: block;
         }
 
-        .menu-item:hover {
-            background-color: #33ff00;
+        .cmd-option:hover {
+            background-color: var(--phosphor-main);
             color: #000;
             text-shadow: none;
-            font-weight: bold;
+        }
+        
+        .cmd-option::before {
+            content: "[ ";
+        }
+        .cmd-option::after {
+            content: " ]";
         }
 
-        .menu-item::before {
-            content: "> ";
-        }
-
-        p, li {
-            font-size: 1.4rem;
-            line-height: 1.4;
-        }
-
-        /* --- BLINKING CURSOR --- */
+        /* De knipperende blok cursor */
         .cursor {
             display: inline-block;
-            width: 10px;
-            height: 20px;
-            background-color: #33ff00;
+            width: 0.6em;
+            height: 1em;
+            background-color: var(--phosphor-main);
             animation: blink 1s step-end infinite;
-            vertical-align: middle;
+            vertical-align: sub;
         }
 
         @keyframes blink {
             50% { opacity: 0; }
         }
 
-        /* Verberg secties standaard */
-        .hidden {
-            display: none;
+        /* Hulpklassen */
+        .hidden { display: none; }
+        .visible { display: block; }
+        
+        /* ASCII Art stijl */
+        pre {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            line-height: 1rem;
+            margin-bottom: 30px;
+            white-space: pre;
         }
         
-        .back-btn {
+        .input-line {
             margin-top: 20px;
-            display: inline-block;
-            border: 1px solid #33ff00;
-            padding: 5px 15px;
-            cursor: pointer;
-        }
-        
-        .back-btn:hover {
-            background: #33ff00;
-            color: #000;
-            text-shadow: none;
         }
 
     </style>
 </head>
 <body>
 
-<div class="monitor-casing">
-    <div class="screen">
-        <div class="screen-content">
-            
-            <h1>HOGGYNESISCHE SPOORWEGEN</h1>
-            
-            <div class="status-bar">
-                <span>TERMINAL: HS-8080</span>
-                <span>STATUS: ONLINE</span>
-                <span>DATUM: <span id="current-date"></span></span>
+<div class="crt-container">
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+    
+    <div class="screen-wrapper">
+        <div class="screen-content" id="terminal-output">
             </div>
-
-            <div id="main-menu">
-                <p>WELKOM BIJ HET HS CENTRAAL INFORMATIESYSTEEM.</p>
-                <p>SELECTEER EEN OPTIE:</p>
-                <br>
-                <div class="menu-grid">
-                    <div class="menu-item" onclick="showSection('dienstregeling')">DIENSTREGELING INZIEN</div>
-                    <div class="menu-item" onclick="showSection('netwerk')">NETWERK STATUS</div>
-                    <div class="menu-item" onclick="showSection('tickets')">VERVOERSBEWIJS KOPEN</div>
-                    <div class="menu-item" onclick="showSection('admin')">ADMINISTRATIEVE LOGIN</div>
-                </div>
-            </div>
-
-            <div id="dienstregeling" class="hidden">
-                <h2>>> DIENSTREGELING</h2>
-                <p>HUIDIGE VERTREKTIJDEN VANAF: CENTRAAL STATION</p>
-                <table>
-                    <tr>
-                        <td style="width: 100px;">10:04</td>
-                        <td style="width: 200px;">NOORD-HAVEN</td>
-                        <td>SPOOR 3</td>
-                    </tr>
-                    <tr>
-                        <td>10:18</td>
-                        <td>OUDE VESTING</td>
-                        <td>SPOOR 1</td>
-                    </tr>
-                    <tr>
-                        <td>10:45</td>
-                        <td>INDUSTRIEDISTRICT</td>
-                        <td>SPOOR 4b</td>
-                    </tr>
-                    <tr>
-                        <td>11:00</td>
-                        <td>GRENSPOST ZUID</td>
-                        <td>VERTRAAGD</td>
-                    </tr>
-                </table>
-                <div class="back-btn" onclick="showSection('main-menu')">< TERUG</div>
-            </div>
-
-            <div id="netwerk" class="hidden">
-                <h2>>> SYSTEEM STATUS</h2>
-                <p>TRAJECT A1: <span style="color: #33ff00">NORMAAL</span></p>
-                <p>TRAJECT B4: <span style="color: yellow">ONDERHOUD VEREIST</span></p>
-                <p>BRUG 7: <span style="color: red; animation: blink 0.5s infinite;">STORING</span></p>
-                <br>
-                <p>> SCANNEN...</p>
-                <div class="back-btn" onclick="showSection('main-menu')">< TERUG</div>
-            </div>
-
-            <div id="tickets" class="hidden">
-                <h2>>> KAARTVERKOOP</h2>
-                <p>FOUT: KAARTAUTOMAAT MODULE NIET GEVONDEN.</p>
-                <p>NEEM CONTACT OP MET HET LOKET.</p>
-                <div class="back-btn" onclick="showSection('main-menu')">< TERUG</div>
-            </div>
-
-            <div id="admin" class="hidden">
-                <h2>>> BEVEILIGDE TOEGANG</h2>
-                <p>VOER WACHTWOORD IN:</p>
-                <p>****<span class="cursor"></span></p>
-                <p style="color: red;">TOEGANG GEWEIGERD.</p>
-                <div class="back-btn" onclick="showSection('main-menu')">< TERUG</div>
-            </div>
-
-        </div>
     </div>
 </div>
 
 <script>
-    // Datum instellen
-    const now = new Date();
-    document.getElementById('current-date').innerText = now.toLocaleDateString('nl-NL');
+    const output = document.getElementById('terminal-output');
+    
+    // ASCII Art Logo
+    const logo = `
+  H O G G Y N E S I S C H E   S P O O R W E G E N
+  ===============================================
+     o o o o o o o . . . . . _________________
+    o      _____           ||      |      |
+  .][__n_n_|DD[  ====_____  |      |      |
+ >(________|__|_[_________]_|______+______|
+ _/oo OOOOO oo'  oo OOOOO oo    oo    oo
+`;
 
-    // Simpele navigatie functie
-    function showSection(id) {
-        // Verberg alles
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('dienstregeling').classList.add('hidden');
-        document.getElementById('netwerk').classList.add('hidden');
-        document.getElementById('tickets').classList.add('hidden');
-        document.getElementById('admin').classList.add('hidden');
-
-        // Toon de gekozen sectie
-        document.getElementById(id).classList.remove('hidden');
-    }
-</script>
-
-</body>
-</html>
+    // De "Boot Sequence" teksten
+    const bootLines = [
+        "HS-BIOS v4.1 (c) 1982",
+        "RAM CONTROLEREN... 64KB OK",
+        "RANDAPPARATUUR LADEN...",
+        "  > SPOORSENSOREN: OK",
+        "  > WISSELBEDIENING: OK",
+        "  > KAARTLEZERS: NIET GEVONDEN",
+        "VERBINDING MAKEN MET HOOFDMAINFRAME...",
+        "...",
