@@ -3,307 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoggynesische Spoorwegen - Terminal V2</title>
+    <title>Hoggynesische Spoorwegen | Publiek Netwerk</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
-            --phosphor-main: #33ff00; /* De groene kleur */
-            --phosphor-dim: #1a8000;
-            --bg-color: #050505;
+            --term-color: #33ff00; /* Fel groen */
+            --term-dim: #1a8000;   /* Dim groen */
+            --bg-color: #0a0a0a;   /* Bijna zwart */
+            --glass-reflection: rgba(255, 255, 255, 0.02);
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--phosphor-main);
-            font-family: 'VT323', monospace;
+            background-color: #000;
             margin: 0;
+            padding: 0;
             height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
-            text-transform: uppercase;
-        }
-
-        /* --- DE BEHUIZING & GROTE SCHERM --- */
-        .crt-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background: #000;
+            font-family: 'VT323', monospace;
             overflow: hidden;
         }
 
-        .screen-content {
+        /* --- DE BEELDBUIS (MONITOR RAND & VORM) --- */
+        .crt-monitor {
+            width: 95%;
+            max-width: 1000px;
+            height: 90vh;
+            background-color: var(--bg-color);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 0 15px #111, 0 0 20px 20px rgba(0,0,0,0.5); /* De fysieke rand */
+            overflow: hidden;
+        }
+
+        /* --- HET SCHERM EFFECT (KROMMING & GLOW) --- */
+        .screen-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            background: 
+                radial-gradient(circle, rgba(18, 16, 16, 0) 60%, rgba(0, 0, 0, 0.6) 100%), /* Vignette (donkere hoeken) */
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%); /* Scanlines vast */
+            background-size: 100% 100%, 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        /* --- DE SCANLIJN DIE OMLAAG BEWEEGT --- */
+        .scan-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(51, 255, 0, 0.1);
+            position: absolute;
+            z-index: 11;
+            opacity: 0.3;
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* --- CONTENT CONTAINER --- */
+        .terminal-content {
             padding: 40px;
+            color: var(--term-color);
+            text-shadow: 0 0 2px var(--term-dim), 0 0 8px var(--term-color);
             height: 100%;
             box-sizing: border-box;
             overflow-y: auto;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 0 4px var(--phosphor-dim), 0 0 2px var(--phosphor-main);
+            /* Scrollbar styling voor webkit */
+            scrollbar-width: thin;
+            scrollbar-color: var(--term-color) #000;
         }
 
-        /* --- POST-PROCESSING EFFECTEN --- */
-        /* Scanlines */
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.4) 50%,
-                rgba(0,0,0,0.4)
-            );
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-        }
+        /* Scrollbar aanpassing */
+        .terminal-content::-webkit-scrollbar { width: 8px; }
+        .terminal-content::-webkit-scrollbar-track { background: #000; }
+        .terminal-content::-webkit-scrollbar-thumb { background: var(--term-color); border: 1px solid #000; }
 
-        /* De "Glow" en Kromming (Vignette) */
-        .vignette {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%);
-            z-index: 11;
-            pointer-events: none;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
-        }
-
-        /* Lichte flikkering van het hele scherm */
-        @keyframes flicker {
-            0% { opacity: 0.95; }
-            5% { opacity: 0.85; }
-            10% { opacity: 0.95; }
-            100% { opacity: 0.95; }
-        }
-        
-        .screen-wrapper {
-            width: 100%;
-            height: 100%;
-            animation: flicker 0.15s infinite;
-        }
-
-        /* --- ELEMENTEN --- */
-        h1 {
-            font-weight: normal;
-            margin: 0 0 20px 0;
-            border-bottom: 2px dashed var(--phosphor-main);
+        /* --- NAVIGATIE BALK --- */
+        .nav-bar {
+            border-bottom: 2px solid var(--term-color);
             padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
+        .nav-links {
+            display: flex;
+            gap: 20px;
         }
 
-        li {
-            margin-bottom: 10px;
-        }
-
-        /* Interactieve regels lijken op command lines */
-        .cmd-option {
+        .nav-item {
             cursor: pointer;
-            display: block;
+            text-decoration: none;
+            color: var(--term-color);
+            font-size: 1.3rem;
+            padding: 2px 8px;
         }
 
-        .cmd-option:hover {
-            background-color: var(--phosphor-main);
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--term-color);
             color: #000;
             text-shadow: none;
         }
+
+        /* --- PAGINA INHOUD --- */
+        .page {
+            display: none; /* Verberg alles standaard */
+            animation: fadeIn 0.3s;
+        }
         
-        .cmd-option::before {
-            content: "[ ";
-        }
-        .cmd-option::after {
-            content: " ]";
+        .page.active {
+            display: block;
         }
 
-        /* De knipperende blok cursor */
-        .cursor {
-            display: inline-block;
-            width: 0.6em;
-            height: 1em;
-            background-color: var(--phosphor-main);
-            animation: blink 1s step-end infinite;
-            vertical-align: sub;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        /* Hulpklassen */
-        .hidden { display: none; }
-        .visible { display: block; }
+        h1, h2, h3 { text-transform: uppercase; font-weight: normal; margin-top: 0; }
+        p, li { font-size: 1.2rem; line-height: 1.5; max-width: 800px;}
         
-        /* ASCII Art stijl */
-        pre {
-            font-family: 'VT323', monospace;
-            font-size: 1rem;
-            line-height: 1rem;
-            margin-bottom: 30px;
+        .logo-ascii {
             white-space: pre;
+            font-size: 10px;
+            line-height: 10px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            opacity: 0.8;
         }
-        
-        .input-line {
-            margin-top: 20px;
+
+        /* --- TABELLEN --- */
+        table { width: 100%; max-width: 800px; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; border-bottom: 1px dashed var(--term-color); padding: 5px; }
+        td { padding: 5px; }
+        tr:hover { background-color: rgba(51, 255, 0, 0.1); }
+
+        /* --- TYPING EFFECT --- */
+        .type-text::after {
+            content: '█';
+            animation: blink 1s infinite;
         }
+
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     </style>
 </head>
 <body>
 
-<div class="crt-container">
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
+<div class="crt-monitor">
+    <div class="screen-overlay"></div>
+    <div class="scan-bar"></div>
     
-    <div class="screen-wrapper">
-        <div class="screen-content" id="terminal-output">
+    <div class="terminal-content">
+        
+        <div class="nav-bar">
+            <div>
+                <div class="logo-ascii">
+  _  _   ___ 
+ | || | / __|
+ | __ | \__ \
+ |_||_| |___/ 
+                </div>
+                <span>HOGGYNESISCHE SPOORWEGEN</span>
             </div>
+            <div class="nav-links">
+                <span class="nav-item active" onclick="navigate('home', this)">[01] HOME</span>
+                <span class="nav-item" onclick="navigate('nieuws', this)">[02] STATUS</span>
+                <span class="nav-item" onclick="navigate('routes', this)">[03] ROUTES</span>
+                <span class="nav-item" onclick="navigate('contact', this)">[04] COMM</span>
+            </div>
+        </div>
+
+        <div id="home" class="page active">
+            <h2 id="typing-header">WELKOM REIZIGER.</h2>
+            <p>U bent verbonden met het HS Publieke Informatie Netwerk (HS-PIN).</p>
+            <p>De Hoggynesische Spoorwegen garandeert (grotendeels) veilig transport door de omliggende sectoren. Gebruik de navigatiebalk hierboven om uw reis te plannen.</p>
+            <br>
+            <div style="border: 1px solid var(--term-color); padding: 15px;">
+                <strong>>> BERICHT VAN DE DAG:</strong><br>
+                Vergeet niet uw bagage in de gaten te houden op Station Centraal i.v.m. recente meldingen van scrap-diefstal.
+            </div>
+        </div>
+
+        <div id="nieuws" class="page">
+            <h2>NETWERK STATUS RAPPORT</h2>
+            <p>LAATSTE UPDATE: VANDAAG, 08:00 UUR</p>
+            <table>
+                <tr>
+                    <th>TRAJECT</th>
+                    <th>STATUS</th>
+                    <th>MELDING</th>
+                </tr>
+                <tr>
+                    <td>NOORD-ZUID LIJN</td>
+                    <td style="color:var(--term-color)">OPERATIONEEL</td>
+                    <td>GEEN BIJZONDERHEDEN</td>
+                </tr>
+                <tr>
+                    <td>INDUSTRIE-LUS</td>
+                    <td style="color:yellow">VERTRAAGD</td>
+                    <td>SIGNAALSTORING SECTOR 4</td>
+                </tr>
+                <tr>
+                    <td>GRENS SPOOR</td>
+                    <td style="color:red">GESLOTEN</td>
+                    <td>BRUG INSPECTIE</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="routes" class="page">
+            <h2>ROUTE INFORMATIE</h2>
+            <p>Selecteer uw bestemming voor reistijd-indicatie.</p>
+            <ul>
+                <li>> CENTRAAL STATION (Knooppunt Alpha)</li>
+                <li>> OUDE HAVEN (Goederenoverslag)</li>
+                <li>> NIEUW-HOGGYNESIE (Woonsector)</li>
+                <li>> FABRIEKS COMPLEX (Alleen met pasje)</li>
+            </ul>
+            <p style="margin-top: 20px; border-top: 1px dashed var(--term-color); padding-top:10px;">
+                <em>Let op: Tijden zijn indicatief en afhankelijk van atmosferische omstandigheden.</em>
+            </p>
+        </div>
+
+        <div id="contact" class="page">
+            <h2>COMMUNICATIE KANALEN</h2>
+            <p>Voor klachten, verloren voorwerpen of meldingen van spoorlopen:</p>
+            <br>
+            <p>> FYSIEK LOKET: Perron 1, Loket 4 (09:00 - 14:00)</p>
+            <p>> TELE-TELEX: #492-221-HS</p>
+            <p>> FREQUENTIE: 104.5 FM (Noodkanaal)</p>
+            <br>
+            <form onsubmit="event.preventDefault(); alert('BERICHT VERZONDEN NAAR CENTRALE.');">
+                <p>LAAT EEN BERICHT ACHTER:</p>
+                <input type="text" placeholder="UW NAAM" style="background:transparent; border:none; border-bottom: 1px solid var(--term-color); color: var(--term-color); font-family:inherit; font-size:1.2rem; width: 300px; outline:none;"><br><br>
+                <input type="text" placeholder="ONDERWERP" style="background:transparent; border:none; border-bottom: 1px solid var(--term-color); color: var(--term-color); font-family:inherit; font-size:1.2rem; width: 300px; outline:none;"><br><br>
+                <button style="background:var(--term-color); color:black; border:none; padding: 5px 15px; font-family:inherit; font-size:1.2rem; cursor:pointer; font-weight:bold;">> VERZENDEN</button>
+            </form>
+        </div>
+
     </div>
 </div>
 
 <script>
-    const output = document.getElementById('terminal-output');
+    // Navigatie Logic
+    function navigate(pageId, element) {
+        // Verwijder active class van alle links
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        // Voeg active class toe aan geklikte link
+        element.classList.add('active');
+
+        // Verberg alle paginas
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        
+        // Toon de juiste pagina
+        const activePage = document.getElementById(pageId);
+        activePage.classList.add('active');
+
+        // Trigger typ-effect (optioneel, voor sfeer)
+        // Hier zou je een complexe type-functie kunnen aanroepen als je wilt.
+    }
+
+    // Type-effect bij laden
+    const textToType = "WELKOM REIZIGER.";
+    const headerElement = document.getElementById('typing-header');
+    headerElement.innerText = ""; // Maak leeg
+    headerElement.classList.add('type-text');
     
-    // ASCII Art Logo
-    const logo = `
-  H O G G Y N E S I S C H E   S P O O R W E G E N
-  ===============================================
-     o o o o o o o . . . . . _________________
-    o      _____           ||      |      |
-  .][__n_n_|DD[  ====_____  |      |      |
- >(________|__|_[_________]_|______+______|
- _/oo OOOOO oo'  oo OOOOO oo    oo    oo
-`;
-
-    // De "Boot Sequence" teksten
-    const bootLines = [
-        "HS-BIOS v4.1 (c) 1982",
-        "RAM CONTROLEREN... 64KB OK",
-        "RANDAPPARATUUR LADEN...",
-        "  > SPOORSENSOREN: OK",
-        "  > WISSELBEDIENING: OK",
-        "  > KAARTLEZERS: NIET GEVONDEN",
-        "VERBINDING MAKEN MET HOOFDMAINFRAME...",
-        "...",
-        "VERBINDING GESLAAGD.",
-        "INITIALISEREN INTERFACE..."
-    ];
-
-    // De Inhoud van de pagina's
-    const pages = {
-        menu: `
-${logo}
-WELKOM, OPERATOR.
-HUIDIGE TIJD: <span id="clock">--:--</span>
-
-KIES EEN FUNCTIE:
-
-<span class="cmd-option" onclick="loadPage('vertrektijden')">1. VERTREKSTAAT BEKIJKEN</span>
-<span class="cmd-option" onclick="loadPage('netwerk')">2. STATUS SPOORNETWERK</span>
-<span class="cmd-option" onclick="loadPage('berichten')">3. BERICHTEN VAN DE DIRECTIE</span>
-
-<div class="input-line">C:\\HS_SYSTEM\\USER> <span class="cursor"></span></div>
-`,
-        vertrektijden: `
->> VERTREKSTAAT LADEN...
-
-STATION: HOGGYNESIE CENTRAAL
-----------------------------------------
-TIJD    BESTEMMING          SPOOR  STATUS
-----------------------------------------
-12:05   NOORD-KAP           02     OP TIJD
-12:18   GROOT-HOGGEN        01     +5 MIN
-12:40   OOST-GRENS          04     VERVALLEN
-13:00   INDUSTRIEZONE-ZUID  03     OP TIJD
-
-<br>
-<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
-<div class="input-line">C:\\HS_SYSTEM\\SCHEDULE> <span class="cursor"></span></div>
-`,
-        netwerk: `
->> NETWERK DIAGNOSE...
-
-SECTOR A (NOORD):      [ONLINE]
-SECTOR B (STAD):       [ONLINE]
-SECTOR C (HAVEN):      [STORING] - WISSEL 404
-SECTOR D (GRENS):      [ONLINE]
-
-LET OP: ONDERHOUD GEPLAND VOOR SECTOR C.
-
-<br>
-<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
-<div class="input-line">C:\\HS_SYSTEM\\NET_DIAG> <span class="cursor"></span></div>
-`,
-        berichten: `
->> INTERNE BERICHTEN
-
-VAN: DIRECTIE SPOORWEGEN
-AAN: ALLE STATIONSCHETS
-ONDERWERP: KOFFIEAUTOMATEN
-
-GELIEVE NIET MEER TE SCHOPPEN TEGEN DE
-KOFFIEAUTOMAAT OP PERRON 2. DEZE IS 
-TECHNISCH GEVOELIG. BIJ VOORBAAT DANK.
-
-EINDE BERICHT.
-
-<br>
-<span class="cmd-option" onclick="loadPage('menu')">R. RETOUR HOOFDMENU</span>
-<div class="input-line">C:\\HS_SYSTEM\\MSG> <span class="cursor"></span></div>
-`
-    };
-
-    // Functie om de boot sequence te draaien
-    async function runBootSequence() {
-        for (let line of bootLines) {
-            const p = document.createElement('div');
-            p.textContent = line;
-            output.appendChild(p);
-            // Scroll naar beneden
-            output.scrollTop = output.scrollHeight;
-            // Wacht willekeurige tijd tussen 100ms en 400ms voor "realisme"
-            await new Promise(r => setTimeout(r, Math.random() * 300 + 100));
-        }
-        await new Promise(r => setTimeout(r, 800)); // Korte pauze na boot
-        loadPage('menu', false);
-    }
-
-    // Functie om pagina's te laden
-    function loadPage(pageKey, clear = true) {
-        if (clear) output.innerHTML = ''; // Scherm wissen
-        
-        const content = pages[pageKey];
-        
-        // Simpel effect: Voeg content direct toe (voor snelheid na boot)
-        // Je kunt hier ook een type-effect toevoegen als je wilt, 
-        // maar dat kan irritant worden bij navigatie.
-        const div = document.createElement('div');
-        div.innerHTML = content;
-        output.appendChild(div);
-
-        // Als we in het menu zijn, start de klok
-        if (pageKey === 'menu') {
-            startClock();
+    let i = 0;
+    function typeWriter() {
+        if (i < textToType.length) {
+            headerElement.innerText += textToType.charAt(i);
+            i++;
+            setTimeout(typeWriter, 100); // Snelheid van typen
+        } else {
+             headerElement.classList.remove('type-text'); // Stop knipperen na typen
         }
     }
-
-    function startClock() {
-        const clockEl = document.getElementById('clock');
-        if (clockEl) {
-            const now = new Date();
-            clockEl.innerText = now.toLocaleTimeString('nl-NL', {hour: '2-digit', minute:'2-digit'});
-        }
-    }
-
-    // START DE TERMINAL
-    runBootSequence();
+    
+    // Start typen na korte vertraging
+    setTimeout(typeWriter, 500);
 
 </script>
 
