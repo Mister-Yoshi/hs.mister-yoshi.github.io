@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HS | Terminal V6.7</title>
+  <title>HS | Terminal V6.8</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -20,23 +20,21 @@
     * { box-sizing: border-box; }
     body { margin: 0; padding: 0; background-color: #000; font-family: 'VT323', monospace; color: var(--p-color); overflow-x: hidden; min-height: 100vh; }
 
-    /* CRT Filters */
     .monitor-overlay { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.2) 50%); background-size: 100% 3px; pointer-events: none; z-index: 2000; }
     .crt-curve { position: fixed; inset: 0; background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.5) 100%); pointer-events: none; z-index: 2001; }
 
-    /* Boot Sequence */
     #boot-screen { position: fixed; inset: 0; background: #000; z-index: 3000; padding: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease-out; }
     #boot-log { text-align: left; width: 100%; max-width: 600px; font-size: 1.4rem; }
 
-    /* Main UI */
     #main-ui { display: none; width: 100%; max-width: 1100px; margin: 0 auto; padding: 20px; text-shadow: 0 0 5px var(--p-color); }
     
     header { border: var(--border-style); padding: 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 25px; background: rgba(0, 20, 0, 0.4); position: relative; }
     
-    .lang-toggle { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--p-color); color: var(--p-color); font-family: inherit; padding: 5px 15px; cursor: pointer; font-size: 1.2rem; }
+    .lang-toggle { position: absolute; top: 10px; right: 10px; background: transparent; border: 1px solid var(--p-color); color: var(--p-color); font-family: inherit; padding: 5px 15px; cursor: pointer; font-size: 1.2rem; z-index: 100; }
     .lang-toggle:hover { background: var(--p-color); color: #000; }
 
     .logo-container { height: 85px; width: 150px; border: 1px solid var(--p-color); overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; }
+    /* Hier is de bestandsnaam nu exact 'hs.jpg' zoals in je repo */
     .logo-container img { height: 100%; width: auto; filter: grayscale(1) brightness(1.2) sepia(1) hue-rotate(70deg) saturate(10); }
 
     .search-bar { border: var(--border-style); padding: 15px; margin-bottom: 40px; background: rgba(0, 10, 0, 0.3); }
@@ -44,7 +42,7 @@
     .search-bar input { flex: 1; background: transparent; border: 1px solid var(--p-dim); color: var(--p-color); font-family: inherit; font-size: 1.6rem; padding: 10px; outline: none; }
     .search-bar button { background: var(--p-color); color: #000; border: none; padding: 0 35px; font-family: inherit; font-size: 1.6rem; font-weight: bold; cursor: pointer; }
 
-    #search-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2500; padding: 100px; color: var(--p-color); font-size: 1.5rem; border: 5px solid var(--p-dim); margin: 20px; box-shadow: 0 0 50px rgba(0,255,0,0.2); }
+    #search-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2500; padding: 100px; color: var(--p-color); font-size: 1.5rem; border: 5px solid var(--p-dim); margin: 20px; }
 
     .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 50px; }
     .interactive-link { border: 1px solid var(--p-dim); padding: 18px; text-align: center; text-decoration: none; color: var(--p-color); font-size: 1.6rem; transition: all 0.2s; }
@@ -64,28 +62,30 @@
   <div id="boot-screen"><div id="boot-log"></div></div>
 
   <div id="search-overlay">
-    <p id="txt-search-init">> VERBINDING MAKEN MET EXTERNE DATABASE...</p>
+    <p id="txt-search-init"></p>
     <p id="search-query-display"></p>
-    <p id="txt-search-encrypt">> ENCRYPTIE... OK</p>
-    <p id="txt-search-gate">> GOOGLE GATEWAY GEOPEND.</p>
-    <p id="txt-search-redir">> DOORSTUREN...</p>
+    <p id="txt-search-encrypt"></p>
+    <p id="txt-search-gate"></p>
+    <p id="txt-search-redir"></p>
   </div>
 
   <div class="container" id="main-ui">
     <header>
       <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">FRANÇAIS</button>
-      <div class="logo-container"><img src="images/hs.jpg" alt="HS Logo"></div>
+      <div class="logo-container">
+        <img src="images/hs.jpg" alt="HS Logo">
+      </div>
       <div class="title-block">
         <h1 id="txt-title">Hoggynesische Spoorwegen</h1>
-        <p id="txt-status">> VERSIE 6.7 | STATUS: OPERATIONEEL</p>
+        <p id="txt-status"></p>
       </div>
     </header>
 
     <main>
       <div class="search-bar">
         <form onsubmit="handleSearch(event)">
-          <input type="text" id="searchInput" placeholder="SYSTEEM ZOEKEN..." name="q" onfocus="playClick()" autocomplete="off">
-          <button type="submit" id="txt-search-btn">ZOEK</button>
+          <input type="text" id="searchInput" placeholder="" name="q" onfocus="playClick()" autocomplete="off">
+          <button type="submit" id="txt-search-btn"></button>
         </form>
       </div>
 
@@ -100,7 +100,7 @@
       </div>
 
       <div class="feature-box">
-        <h2 id="txt-feature-title" style="border-bottom: 1px solid var(--p-dim); display: inline-block;">VERTREKSTATEN</h2>
+        <h2 id="txt-feature-title" style="border-bottom: 1px solid var(--p-dim); display: inline-block;"></h2>
         <div class="iframe-container">
           <iframe src="https://treinposities.nl/embedvertrekstaat/assen"></iframe>
           <iframe src="https://treinposities.nl/embedvertrekstaat/roosendaal"></iframe>
@@ -111,7 +111,7 @@
     </main>
 
     <footer>
-      <p id="txt-footer">&copy; 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X</p>
+      <p id="txt-footer"></p>
     </footer>
   </div>
 
@@ -120,41 +120,25 @@
     const translations = {
       nl: { 
         title: "Hoggynesische Spoorwegen", 
-        status: "> VERSIE 6.7 | STATUS: OPERATIONEEL", 
+        status: "> VERSIE 6.8 | STATUS: OPERATIONEEL", 
         search: "SYSTEEM ZOEKEN...", 
         searchBtn: "ZOEK", 
-        ns: "NS",
-        nsi: "NS International",
-        tp: "Treinposities",
-        nmbs: "NMBS", 
-        nmbsInt: "NMBS International", 
+        ns: "NS", nsi: "NS International", tp: "Treinposities", nmbs: "NMBS", nmbsi: "NMBS International",
         feature: "VERTREKSTATEN", 
         footer: "© 2025 HOGGYNESISCHE SPOORWEGEN - PROTOCOL HS-X", 
         langBtn: "FRANÇAIS",
-        sInit: "> VERBINDING MAKEN MET EXTERNE DATABASE...",
-        sQuery: "> ZOEKOPDRACHT: ",
-        sEncrypt: "> ENCRYPTIE... OK",
-        sGate: "> GOOGLE GATEWAY GEOPEND.",
-        sRedir: "> DOORSTUREN..."
+        sInit: "> VERBINDING MAKEN MET EXTERNE DATABASE...", sQuery: "> ZOEKOPDRACHT: ", sEncrypt: "> ENCRYPTIE... OK", sGate: "> GOOGLE GATEWAY GEOPEND.", sRedir: "> DOORSTUREN..."
       },
       fr: { 
         title: "Chemin de fer Hoggynésiens", 
-        status: "> VERSION 6.7 | ÉTAT: OPÉRATIONNEL", 
+        status: "> VERSION 6.8 | ÉTAT: OPÉRATIONNEL", 
         search: "RECHERCHE SYSTÈME...", 
         searchBtn: "CHERCHER", 
-        ns: "NS (Pays-Bas)",
-        nsi: "NS International",
-        tp: "Treinposities",
-        nmbs: "SNCB", 
-        nmbsInt: "SNCB International", 
+        ns: "NS (Pays-Bas)", nsi: "NS International", tp: "Positions Trains", nmbs: "SNCB", nmbsi: "SNCB International",
         feature: "TABLEAUX DE DÉPART", 
         footer: "© 2025 CHEMIN DE FER HOGGYNÉSIENS - PROTOCOLE HS-X", 
         langBtn: "NEDERLANDS",
-        sInit: "> CONNEXION À LA BASE DE DONNÉES EXTERNE...",
-        sQuery: "> REQUÊTE: ",
-        sEncrypt: "> CHIFFREMENT... OK",
-        sGate: "> PASSERELLE GOOGLE OUVERTE.",
-        sRedir: "> REDIRECTION..."
+        sInit: "> CONNEXION À LA BASE DE DONNÉES EXTERNE...", sQuery: "> REQUÊTE: ", sEncrypt: "> CHIFFREMENT... OK", sGate: "> PASSERELLE GOOGLE OUVERTE.", sRedir: "> REDIRECTION..."
       }
     };
 
@@ -168,10 +152,35 @@
       osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
       g.gain.setValueAtTime(0.1, audioCtx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-      osc.connect(g);
-      g.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.05);
+      osc.connect(g); g.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function updateUI() {
+      const t = translations[currentLang];
+      document.getElementById('txt-title').innerText = t.title;
+      document.getElementById('txt-status').innerText = t.status;
+      document.getElementById('searchInput').placeholder = t.search;
+      document.getElementById('txt-search-btn').innerText = t.searchBtn;
+      document.getElementById('btn-ns').innerText = t.ns;
+      document.getElementById('btn-nsi').innerText = t.nsi;
+      document.getElementById('btn-tp').innerText = t.tp;
+      document.getElementById('btn-nmbs').innerText = t.nmbs;
+      document.getElementById('btn-nmbsi').innerText = t.nmbsi;
+      document.getElementById('txt-feature-title').innerText = t.feature;
+      document.getElementById('txt-footer').innerText = t.footer;
+      document.getElementById('langBtn').innerText = t.langBtn;
+      // Overlay texts
+      document.getElementById('txt-search-init').innerText = t.sInit;
+      document.getElementById('txt-search-encrypt').innerText = t.sEncrypt;
+      document.getElementById('txt-search-gate').innerText = t.sGate;
+      document.getElementById('txt-search-redir').innerText = t.sRedir;
+    }
+
+    function toggleLanguage() {
+      playClick();
+      currentLang = (currentLang === 'nl') ? 'fr' : 'nl';
+      updateUI();
     }
 
     async function handleSearch(event) {
@@ -180,48 +189,19 @@
       const q = document.getElementById('searchInput').value;
       if (!q) return;
       const t = translations[currentLang];
-      const overlay = document.getElementById('search-overlay');
-      document.getElementById('search-query-display').textContent = `${t.sQuery} "${q}"`;
-      overlay.style.display = 'block';
+      document.getElementById('search-query-display').innerText = `${t.sQuery} "${q}"`;
+      document.getElementById('search-overlay').style.display = 'block';
       await new Promise(r => setTimeout(r, 900));
       window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
-      setTimeout(() => { overlay.style.display = 'none'; }, 500);
-    }
-
-    function toggleLanguage() {
-      playClick();
-      currentLang = currentLang === 'nl' ? 'fr' : 'nl';
-      const t = translations[currentLang];
-      
-      // UI Tekst
-      document.getElementById('txt-title').textContent = t.title;
-      document.getElementById('txt-status').textContent = t.status;
-      document.getElementById('txt-search-placeholder').placeholder = t.search;
-      document.getElementById('txt-search-btn').textContent = t.searchBtn;
-      document.getElementById('txt-feature-title').textContent = t.feature;
-      document.getElementById('txt-footer').textContent = t.footer;
-      document.getElementById('langBtn').textContent = t.langBtn;
-
-      // Knoppen/Links specifiek
-      document.getElementById('btn-ns').textContent = t.ns;
-      document.getElementById('btn-nsi').textContent = t.nsi;
-      document.getElementById('btn-tp').textContent = t.tp;
-      document.getElementById('btn-nmbs').textContent = t.nmbs;
-      document.getElementById('btn-nmbsi').textContent = t.nmbsInt;
-
-      // Overlay
-      document.getElementById('txt-search-init').textContent = t.sInit;
-      document.getElementById('txt-search-encrypt').textContent = t.sEncrypt;
-      document.getElementById('txt-search-gate').textContent = t.sGate;
-      document.getElementById('txt-search-redir').textContent = t.sRedir;
+      setTimeout(() => { document.getElementById('search-overlay').style.display = 'none'; }, 500);
     }
 
     async function runBoot() {
-      const messages = ["SYSTEM INIT: HS-CORE-V6.7", "LOCALIZATION SYNC... OK", "READY."];
+      updateUI(); // Zet taal direct goed
+      const messages = ["SYSTEM INIT: HS-CORE-V6.8", "CHECKING images/hs.jpg... OK", "READY."];
       const bootLog = document.getElementById('boot-log');
       for (const msg of messages) {
-        const p = document.createElement('p');
-        bootLog.appendChild(p);
+        const p = document.createElement('p'); bootLog.appendChild(p);
         for (let char of msg) { p.textContent += char; await new Promise(r => setTimeout(r, 20)); }
         await new Promise(r => setTimeout(r, 150));
       }
