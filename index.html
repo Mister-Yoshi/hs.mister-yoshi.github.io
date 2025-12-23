@@ -10,190 +10,96 @@
   
   <style>
     :root {
-      --p-color: #33ff00; /* Fel groen */
-      --p-dim: #1a8000;   /* Gedimd groen */
+      --p-color: #33ff00; 
+      --p-dim: #1a8000;   
       --bg-color: #050505;
       --border-style: 2px solid var(--p-color);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background-color: #000;
       font-family: 'VT323', monospace;
       color: var(--p-color);
-      overflow-x: hidden;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
-      min-height: 100vh;
     }
 
-    /* --- CRT & SCANLINE EFFECTS --- */
+    /* --- BOOT SEQUENCE ANIMATIE --- */
+    #boot-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #000;
+      z-index: 1000;
+      padding: 40px;
+      display: block;
+    }
+
+    /* --- CRT EFFECTEN --- */
     .monitor-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 3px 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+      background-size: 100% 3px;
       pointer-events: none;
       z-index: 100;
     }
 
-    .monitor-overlay::after {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.4) 100%);
-      pointer-events: none;
-    }
-
-    /* --- CONTAINER --- */
     .container {
-      width: 100%;
-      max-width: 1100px;
+      width: 100%; max-width: 1100px;
       padding: 20px;
       position: relative;
       text-shadow: 0 0 5px var(--p-color);
-      animation: flicker 0.15s infinite;
+      display: none; /* Wordt getoond na boot */
     }
 
-    @keyframes flicker {
-      0% { opacity: 0.99; }
-      100% { opacity: 1; }
-    }
-
-    /* --- HEADER --- */
     header {
       border: var(--border-style);
-      padding: 20px;
-      margin-bottom: 30px;
-      display: flex;
-      align-items: center;
-      gap: 25px;
-      background: rgba(0, 20, 0, 0.3);
+      padding: 20px; margin-bottom: 30px;
+      display: flex; align-items: center; gap: 25px;
+      background: rgba(0, 20, 0, 0.5);
     }
 
     .logo-link img {
       height: 80px;
-      filter: grayscale(1) sepia(1) hue-rotate(60deg) brightness(1.2);
+      filter: grayscale(1) brightness(0.8) sepia(1) hue-rotate(60deg) saturate(15);
       border: 1px solid var(--p-color);
     }
 
-    .title-block h1 {
-      margin: 0;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-    }
-
-    .title-block p {
-      margin: 5px 0 0;
-      font-size: 1.2rem;
-      opacity: 0.8;
-    }
-
-    /* --- SEARCH BAR --- */
     .search-bar {
-      margin-bottom: 40px;
       border: var(--border-style);
-      padding: 15px;
-      background: rgba(0, 30, 0, 0.2);
+      padding: 15px; margin-bottom: 40px;
     }
 
-    .search-bar form {
-      display: flex;
-      gap: 15px;
-    }
-
+    .search-bar form { display: flex; gap: 15px; }
     .search-bar input {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--p-dim);
-      color: var(--p-color);
-      font-family: inherit;
-      font-size: 1.5rem;
-      padding: 10px;
-      outline: none;
-    }
-
-    .search-bar input:focus {
-      border-color: var(--p-color);
-      background: rgba(51, 255, 0, 0.05);
+      flex: 1; background: transparent; border: 1px solid var(--p-dim);
+      color: var(--p-color); font-family: inherit; font-size: 1.5rem; padding: 10px; outline: none;
     }
 
     .search-bar button {
-      background: var(--p-color);
-      color: #000;
-      border: none;
-      padding: 0 30px;
-      font-family: inherit;
-      font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-      text-transform: uppercase;
+      background: var(--p-color); color: #000; border: none;
+      padding: 0 30px; font-family: inherit; font-size: 1.5rem; font-weight: bold; cursor: pointer;
     }
 
-    .search-bar button:hover {
-      background: #fff;
-    }
-
-    /* --- LINKS GRID --- */
     .links {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 50px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px; margin-bottom: 50px;
     }
 
     .interactive-link {
-      border: 1px solid var(--p-dim);
-      padding: 15px;
-      text-align: center;
-      text-decoration: none;
-      color: var(--p-color);
-      font-size: 1.4rem;
-      transition: all 0.2s;
-      background: rgba(0, 10, 0, 0.2);
+      border: 1px solid var(--p-dim); padding: 15px; text-align: center;
+      text-decoration: none; color: var(--p-color); font-size: 1.4rem;
     }
 
     .interactive-link:hover {
-      background: var(--p-color);
-      color: #000;
-      text-shadow: none;
+      background: var(--p-color); color: #000; text-shadow: none;
     }
 
-    .interactive-link::before {
-      content: "[ ";
-    }
-    .interactive-link::after {
-      content: " ]";
-    }
-
-    /* --- FEATURE BOX & IFRAMES --- */
-    .feature-box {
-      border: var(--border-style);
-      padding: 25px;
-      margin-bottom: 60px;
-      background: rgba(0, 15, 0, 0.2);
-    }
-
-    .feature-box h2 {
-      margin-top: 0;
-      font-size: 2rem;
-      border-bottom: 1px solid var(--p-dim);
-      display: inline-block;
-      margin-bottom: 20px;
-    }
-
-    .feature-box p {
-      font-size: 1.3rem;
-      line-height: 1.4;
-      margin-bottom: 25px;
-    }
-
+    /* --- DE ULTRA GROENE IFRAME FILTER --- */
     .iframe-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -203,74 +109,70 @@
     .iframe-container iframe {
       width: 100%;
       height: 350px;
-      border: 1px solid var(--p-dim);
-      filter: grayscale(1) sepia(1) hue-rotate(60deg) invert(0.9) brightness(0.8);
-      /* Invert zorgt dat de witte achtergrond van externe sites donker wordt */
+      border: 2px solid var(--p-color);
+      background: #000;
+      /* Deze filter dwingt de witte sites naar zwart-groen */
+      filter: invert(1) hue-rotate(95deg) brightness(1.1) contrast(1.2) sepia(100%) saturate(800%) hue-rotate(45deg);
     }
 
-    /* --- FOOTER --- */
     footer {
       border-top: var(--border-style);
       padding: 40px 20px;
-      background: rgba(0, 10, 0, 0.4);
+      margin-top: 50px;
     }
 
-    footer p {
-      margin: 15px 0;
-      font-size: 1.1rem;
-      max-width: 900px;
-      line-height: 1.3;
+    .typing {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: .15em solid var(--p-color);
+      animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
     }
 
-    footer strong {
-      color: #fff;
-      text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      header { flex-direction: column; text-align: center; }
-      .search-bar form { flex-direction: column; }
-    }
+    @keyframes typing { from { width: 0 } to { width: 100% } }
+    @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--p-color); } }
   </style>
 </head>
 <body>
 
+  <div id="boot-screen">
+    <div id="boot-text"></div>
+  </div>
+
   <div class="monitor-overlay"></div>
 
-  <div class="container">
+  <div class="container" id="main-ui">
     <header>
       <a href="#" class="logo-link">
-        <img src="images/HS.jpg" alt="Logo HS">
+        <img src="images/HS.jpg" alt="HS Logo">
       </a>
       <div class="title-block">
         <h1>Hoggynesische Spoorwegen</h1>
-        <p>> SYSTEEM-STATUS: OPERATIONEEL | HUB-ID: 21-A</p>
+        <p>> SYSTEEM-STATUS: ONLINE | LOCATIE: SECTOR_ASSEN</p>
       </div>
     </header>
 
     <main class="main-content">
       <div class="search-bar">
         <form action="https://www.google.com/search">
-          <input type="text" placeholder="COMMANDO INVOEREN..." name="q">
-          <button type="submit">EXECUTE</button>
+          <input type="text" placeholder="ZOEKOPDRACHT..." name="q">
+          <button type="submit">ZOEK</button>
         </form>
       </div>
 
       <div class="links">
-        <a href="https://www.ns.nl/" class="interactive-link">NS_KERN</a>
-        <a href="https://www.nsinternational.com/" class="interactive-link">INT_REIS</a>
-        <a href="https://treinposities.nl/" class="interactive-link">RADAR_NL</a>
-        <a href="https://www.belgiantrain.be/" class="interactive-link">NMBS_SYS</a>
-        <a href="https://chatgpt.com/" class="interactive-link">AI_CORE</a>
-        <a href="https://github.com/" class="interactive-link">GIT_REPO</a>
-        <a href="https://www.b-europe.com/" class="interactive-link">BE_INT</a>
-        <a href="https://mister-yoshi.github.io/index-fr.html" class="interactive-link">LANG_FR</a>
+        <a href="https://www.ns.nl/" class="interactive-link">NS</a>
+        <a href="https://www.nsinternational.com/" class="interactive-link">NS International</a>
+        <a href="https://treinposities.nl/" class="interactive-link">Treinposities</a>
+        <a href="https://www.belgiantrain.be/" class="interactive-link">NMBS</a>
+        <a href="https://chatgpt.com/" class="interactive-link">ChatGPT</a>
+        <a href="https://github.com/" class="interactive-link">Github</a>
+        <a href="https://www.b-europe.com/" class="interactive-link">NMBS International</a>
+        <a href="https://mister-yoshi.github.io/index-fr.html" class="interactive-link">Frans</a>
       </div>
 
       <div class="feature-box">
-        <h2>VERTREKSTATEN (REALTIME)</h2>
-        <p>Data-feed geactiveerd voor sectoren: Assen, Roosendaal, Maastricht en Breda. Scan de matrix hieronder voor actuele tijdstippen.</p>
+        <h2>VERTREKSTATEN</h2>
+        <p>Real-time datafeed van geselecteerde overslagpunten:</p>
         
         <div class="iframe-container">
           <iframe src="https://treinposities.nl/embedvertrekstaat/assen"></iframe>
@@ -282,13 +184,41 @@
     </main>
 
     <footer>
-      <p><strong>NS</strong>: Centraal protocol voor transport binnen de Nederlandse perimeter.</p>
-      <p><strong>NS International</strong>: Grensoverschrijdende verbindingen naar bevriende sectoren.</p>
-      <p><strong>Treinposities NL</strong>: Tactische weergave van alle actieve eenheden op het spoor.</p>
-      <p><strong>NMBS</strong>: Beheer van het zuidelijke spoornetwerk.</p>
-      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN. GEAUTORISEERDE TOEGANG VOLGENS PROTOCOL HS-99.</p>
+      <p>&copy; 2025 HOGGYNESISCHE SPOORWEGEN. ALLE SYSTEMEN NOMINAAL.</p>
     </footer>
   </div>
 
+  <script>
+    // Boot animatie script
+    const bootText = [
+      "HS-BIOS V4.0.2...",
+      "GEHEUGEN CHECK: 640KB OK",
+      "NETWERK PROTOCOL: HS-IP ACTIEF",
+      "IFRAME MODULES LADEN...",
+      "FELGROENE FOSFOR GEINITIALISEERD...",
+      "TOEGANG VERLEEND."
+    ];
+
+    const bootContainer = document.getElementById('boot-text');
+    let line = 0;
+
+    function typeBoot() {
+      if (line < bootText.length) {
+        let p = document.createElement('p');
+        p.className = "typing";
+        p.innerText = "> " + bootText[line];
+        bootContainer.appendChild(p);
+        line++;
+        setTimeout(typeBoot, 600);
+      } else {
+        setTimeout(() => {
+          document.getElementById('boot-screen').style.display = 'none';
+          document.getElementById('main-ui').style.display = 'block';
+        }, 1000);
+      }
+    }
+
+    window.onload = typeBoot;
+  </script>
 </body>
 </html>
